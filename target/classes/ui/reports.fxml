@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.ptit.ticketing.controller.ReportsController"
+            prefWidth="800" prefHeight="600">
+
+    <VBox spacing="10" AnchorPane.topAnchor="10" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10">
+
+        <Label text="📊 Revenue Reports" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+        <Label fx:id="totalLabel" style="-fx-font-size: 14px; -fx-text-fill: green;"/>
+        <TableView fx:id="reportsTable" prefHeight="400">
+            <columns>
+                <TableColumn fx:id="movieColumn" text="Movie"/>
+                <TableColumn fx:id="showtimeColumn" text="Showtime"/>
+                <TableColumn fx:id="ticketsSoldColumn" text="Tickets Sold"/>
+                <TableColumn fx:id="revenueColumn" text="Revenue (₫)"/>
+            </columns>
+        </TableView>
+
+        <!-- ✅ Đóng HBox đúng cách -->
+        <HBox spacing="10" alignment="CENTER">
+            <Button fx:id="refreshButton" text="🔄 Refresh"/>
+            <Button fx:id="exportPdfButton" text="💾 Export to PDF" onAction="#exportToPDF"/>
+            <Button fx:id="exportExcelButton" text="📘 Export to Excel" onAction="#exportToExcel"/>
+        </HBox>
+
+
+        <TabPane>
+            <Tab text="Daily Revenue">
+                <BarChart fx:id="dailyChart">
+                    <xAxis><CategoryAxis label="Date"/></xAxis>
+                    <yAxis><NumberAxis label="Revenue (₫)"/></yAxis>
+                </BarChart>
+            </Tab>
+            <Tab text="Monthly Revenue">
+                <BarChart fx:id="monthlyChart">
+                    <xAxis><CategoryAxis label="Month"/></xAxis>
+                    <yAxis><NumberAxis label="Revenue (₫)"/></yAxis>
+                </BarChart>
+            </Tab>
+        </TabPane>
+
+    </VBox>
+</AnchorPane>

@@ -113,6 +113,8 @@ public class Ticket {
 
     @Override
     public String toString() {
-        return seatLabel + " - " + movieTitle + " (" + status + ")";
+        return String.format("Ticket[id=%s, price=%.2f, status=%s, booked_at=%s]", 
+            id, price, status, bookedAt);
     }
 }
+

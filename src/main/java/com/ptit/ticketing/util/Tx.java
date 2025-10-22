@@ -13,6 +13,7 @@ public class Tx {
   public static <T> T withTx(DataSource ds, SqlFunction<Connection, T> fn) {
     try (Connection c = ds.getConnection()) {
       try {
+        c.setAutoCommit(false);
         T r = fn.apply(c);
         c.commit();
         return r;
