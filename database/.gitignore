@@ -1,0 +1,8 @@
+# Ignore personal backups
+backup_*.sql
+cinema_backup_*.sql
+
+# Keep main dump files
+!cinema_dump.sql
+!cinema_schema.sql
+!cinema_data.sql
