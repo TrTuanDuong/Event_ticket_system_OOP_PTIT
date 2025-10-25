@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 
 <AnchorPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.ptit.ticketing.controller.ReportsController"
+            fx:controller="com.ptit.ticketing.ui.ReportsController"
             prefWidth="800" prefHeight="600"
             style="-fx-background-color: #f9f9f9;">
 

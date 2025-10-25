@@ -1,4 +1,4 @@
-    package com.ptit.ticketing.controller;
+    package com.ptit.ticketing.ui;
     import javafx.event.ActionEvent;
 
     import com.ptit.ticketing.config.Database;
