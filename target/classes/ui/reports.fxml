@@ -5,43 +5,53 @@
 
 <AnchorPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.ptit.ticketing.controller.ReportsController"
-            prefWidth="800" prefHeight="600">
+            prefWidth="800" prefHeight="600"
+            style="-fx-background-color: #f9f9f9;">
 
-    <VBox spacing="10" AnchorPane.topAnchor="10" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10">
+    <VBox spacing="12" AnchorPane.topAnchor="10" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10" AnchorPane.bottomAnchor="10">
+        <!-- Tiêu đề -->
+        <Label text="📊 Revenue Reports"
+               style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #333;" />
 
-        <Label text="📊 Revenue Reports" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
-        <Label fx:id="totalLabel" style="-fx-font-size: 14px; -fx-text-fill: green;"/>
-        <TableView fx:id="reportsTable" prefHeight="400">
+        <!-- Tổng doanh thu -->
+        <Label fx:id="totalLabel"
+               style="-fx-font-size: 14px; -fx-text-fill: green;" />
+
+        <!-- Bảng dữ liệu -->
+        <TableView fx:id="reportsTable" VBox.vgrow="ALWAYS">
             <columns>
-                <TableColumn fx:id="movieColumn" text="Movie"/>
-                <TableColumn fx:id="showtimeColumn" text="Showtime"/>
-                <TableColumn fx:id="ticketsSoldColumn" text="Tickets Sold"/>
-                <TableColumn fx:id="revenueColumn" text="Revenue (₫)"/>
+                <TableColumn fx:id="movieColumn" text="Movie" prefWidth="150"/>
+                <TableColumn fx:id="showtimeColumn" text="Showtime" prefWidth="150"/>
+                <TableColumn fx:id="ticketsSoldColumn" text="Tickets Sold" prefWidth="100"/>
+                <TableColumn fx:id="revenueColumn" text="Revenue (₫)" prefWidth="150"/>
             </columns>
         </TableView>
 
-        <!-- ✅ Đóng HBox đúng cách -->
+        <!-- Hàng nút chức năng -->
         <HBox spacing="10" alignment="CENTER">
-            <Button fx:id="refreshButton" text="🔄 Refresh"/>
-            <Button fx:id="exportPdfButton" text="💾 Export to PDF" onAction="#exportToPDF"/>
-            <Button fx:id="exportExcelButton" text="📘 Export to Excel" onAction="#exportToExcel"/>
+            <Button fx:id="refreshButton" text="🔄 Refresh" />
+            <Button fx:id="exportPdfButton" text="💾 Export to PDF" onAction="#exportToPDF" />
+            <Button fx:id="exportExcelButton" text="📘 Export to Excel" onAction="#exportToExcel" />
         </HBox>
 
-
-        <TabPane>
+        <!-- Tab biểu đồ -->
+        <TabPane VBox.vgrow="ALWAYS">
             <Tab text="Daily Revenue">
-                <BarChart fx:id="dailyChart">
-                    <xAxis><CategoryAxis label="Date"/></xAxis>
-                    <yAxis><NumberAxis label="Revenue (₫)"/></yAxis>
-                </BarChart>
+                <AnchorPane>
+                    <BarChart fx:id="dailyChart" AnchorPane.topAnchor="5" AnchorPane.leftAnchor="5" AnchorPane.rightAnchor="5" AnchorPane.bottomAnchor="5">
+                        <xAxis><CategoryAxis label="Date"/></xAxis>
+                        <yAxis><NumberAxis label="Revenue (₫)"/></yAxis>
+                    </BarChart>
+                </AnchorPane>
             </Tab>
             <Tab text="Monthly Revenue">
-                <BarChart fx:id="monthlyChart">
-                    <xAxis><CategoryAxis label="Month"/></xAxis>
-                    <yAxis><NumberAxis label="Revenue (₫)"/></yAxis>
-                </BarChart>
+                <AnchorPane>
+                    <BarChart fx:id="monthlyChart" AnchorPane.topAnchor="5" AnchorPane.leftAnchor="5" AnchorPane.rightAnchor="5" AnchorPane.bottomAnchor="5">
+                        <xAxis><CategoryAxis label="Month"/></xAxis>
+                        <yAxis><NumberAxis label="Revenue (₫)"/></yAxis>
+                    </BarChart>
+                </AnchorPane>
             </Tab>
         </TabPane>
-
     </VBox>
 </AnchorPane>
