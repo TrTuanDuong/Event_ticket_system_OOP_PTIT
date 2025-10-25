@@ -70,7 +70,7 @@
         <artifactId>javafx-maven-plugin</artifactId>
         <version>0.0.8</version>
         <configuration>
-          <mainClass>com.ptit.ticketing.TestReportsUI</mainClass>
+          <mainClass>com.ptit.ticketing.MainApp</mainClass>
         </configuration>
       </plugin>
     </plugins>
