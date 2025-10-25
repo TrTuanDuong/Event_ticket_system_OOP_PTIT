@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.ptit.ticketing.ui.BookingController"
+      spacing="12" alignment="CENTER" padding="20">
+
+    <Label text="🎫 Booking Form" style="-fx-font-size: 20px; -fx-font-weight: bold;" />
+
+    <GridPane hgap="10" vgap="10">
+        <columnConstraints>
+            <ColumnConstraints halignment="RIGHT" minWidth="100" />
+            <ColumnConstraints halignment="LEFT" minWidth="200" />
+        </columnConstraints>
+
+        <Label text="User ID:" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+        <TextField fx:id="txtUserId" promptText="Enter user ID" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+
+        <Label text="Showtime ID:" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+        <TextField fx:id="txtShowtimeId" promptText="Enter showtime ID" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+    </GridPane>
+
+    <Label text="Selected Seats:" style="-fx-font-weight: bold;" />
+    <ListView fx:id="seatListView" prefHeight="150" prefWidth="300" />
+
+    <HBox spacing="10" alignment="CENTER">
+        <Button text="➕ Add Seat" onAction="#handleAddSeat" />
+        <Button text="💾 Create Booking" fx:id="btnCreateBooking" onAction="#handleCreateBooking"
+                style="-fx-background-color: #4CAF50; -fx-text-fill: white;" />
+    </HBox>
+
+    <Label fx:id="lblStatus" text="Ready..." style="-fx-text-fill: #555;" />
+
+</VBox>

@@ -2,6 +2,7 @@ package com.ptit.ticketing.domain;
 
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -129,5 +130,15 @@ public class Booking {
     @Override
     public String toString() {
         return userName + " - " + movieTitle + " (" + status + ")";
+    }
+
+    public void setCreatedAt(LocalDateTime now) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setCreatedAt'");
+    }
+
+    public void setShowtimeId(int showtimeId2) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setShowtimeId'");
     }
 }

@@ -152,4 +152,24 @@ public class BookingRepo extends BaseRepo {
         b.setShowtimeStart(rs.getObject("showtime_start", OffsetDateTime.class));
         return b;
     }
+
+    public int insert(Booking booking) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'insert'");
+    }
+
+    public void scheduleExpire(int bookingId, int i) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'scheduleExpire'");
+    }
+
+    public boolean updateStatus(int bookingId, String string) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'updateStatus'");
+    }
+
+    public List<Booking> findByUser(int userId) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'findByUser'");
+    }
 }

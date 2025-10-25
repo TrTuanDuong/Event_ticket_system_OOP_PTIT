@@ -1,6 +1,9 @@
 package com.ptit.ticketing.util;
 
 import javax.sql.DataSource;
+
+import org.postgresql.ds.PGSimpleDataSource;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -24,5 +27,15 @@ public class Tx {
     } catch (Exception e) {
       throw new RuntimeException("Connection failed", e);
     }
+  }
+
+  public static boolean run(Object object) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'run'");
+  }
+
+  public static void init(PGSimpleDataSource ds) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'init'");
   }
 }
