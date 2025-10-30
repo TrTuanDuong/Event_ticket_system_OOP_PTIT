@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <TabPane tabClosingPolicy="UNAVAILABLE">
+         <tabs>
+            <Tab text="Sơ đồ ghế">
+               <content>
+                  <fx:include source="seat-map.fxml" />
+               </content>
+            </Tab>
+            
+            <Tab text="Quản lý Phim">
+               <content>
+                  <fx:include source="movie-list.fxml" />
+               </content>
+            </Tab>
+
+            <Tab text="Dashboard">
+               <content>
+                  <fx:include source="dashboard.fxml" />
+               </content>
+            </Tab>
+         </tabs>
+      </TabPane>
+   </center>
+</BorderPane>

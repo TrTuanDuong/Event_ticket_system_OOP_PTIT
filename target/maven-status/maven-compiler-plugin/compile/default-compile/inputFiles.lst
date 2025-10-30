@@ -1,29 +1,35 @@
-C:\Users\VAN DU\Desktop\BTL_OOP backup\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\auth\DjangoPassword.java
-C:\Users\VAN DU\Desktop\BTL_OOP backup\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\config\Database.java
-C:\Users\VAN DU\Desktop\BTL_OOP backup\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\controller\ReportsController.java
-C:\Users\VAN DU\Desktop\BTL_OOP backup\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\domain\Auditorium.java
-C:\Users\VAN DU\Desktop\BTL_OOP backup\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\domain\Booking.java
-C:\Users\VAN DU\Desktop\BTL_OOP backup\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\domain\Movie.java
-C:\Users\VAN DU\Desktop\BTL_OOP backup\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\domain\Seat.java
-C:\Users\VAN DU\Desktop\BTL_OOP backup\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\domain\Showtime.java
-C:\Users\VAN DU\Desktop\BTL_OOP backup\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\domain\Ticket.java
-C:\Users\VAN DU\Desktop\BTL_OOP backup\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\domain\User.java
-C:\Users\VAN DU\Desktop\BTL_OOP backup\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\MainApp.java
-C:\Users\VAN DU\Desktop\BTL_OOP backup\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\model\Report.java
-C:\Users\VAN DU\Desktop\BTL_OOP backup\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\repo\BaseRepo.java
-C:\Users\VAN DU\Desktop\BTL_OOP backup\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\repo\BookingRepo.java
-C:\Users\VAN DU\Desktop\BTL_OOP backup\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\repo\MovieRepo.java
-C:\Users\VAN DU\Desktop\BTL_OOP backup\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\repo\ShowtimeRepo.java
-C:\Users\VAN DU\Desktop\BTL_OOP backup\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\repo\TicketRepo.java
-C:\Users\VAN DU\Desktop\BTL_OOP backup\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\repo\UserRepo.java
-C:\Users\VAN DU\Desktop\BTL_OOP backup\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\service\AuthService.java
-C:\Users\VAN DU\Desktop\BTL_OOP backup\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\service\BaseService.java
-C:\Users\VAN DU\Desktop\BTL_OOP backup\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\service\ReportService.java
-C:\Users\VAN DU\Desktop\BTL_OOP backup\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\service\TicketService.java
-C:\Users\VAN DU\Desktop\BTL_OOP backup\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\SimpleDataSource.java
-C:\Users\VAN DU\Desktop\BTL_OOP backup\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\TestConnection.java
-C:\Users\VAN DU\Desktop\BTL_OOP backup\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\TestMemberD.java
-C:\Users\VAN DU\Desktop\BTL_OOP backup\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\TestReportsUI.java
-C:\Users\VAN DU\Desktop\BTL_OOP backup\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\util\ExportService.java
-C:\Users\VAN DU\Desktop\BTL_OOP backup\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\util\QRService.java
-C:\Users\VAN DU\Desktop\BTL_OOP backup\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\util\Tx.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\auth\DjangoPassword.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\config\Database.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\domain\Auditorium.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\domain\Booking.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\domain\Movie.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\domain\Seat.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\domain\Showtime.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\domain\Ticket.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\domain\User.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\MainApp.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\model\Report.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\repo\BaseRepo.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\repo\BookingRepo.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\repo\MovieRepo.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\repo\PaymentRepo.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\repo\SeatRepo.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\repo\ShowtimeRepo.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\repo\TicketRepo.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\repo\UserRepo.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\service\Assertions.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\service\AuthService.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\service\BaseService.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\service\BookingService.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\service\Executable.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\service\PaymentService.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\service\ReportService.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\service\Test.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\service\TicketService.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\SimpleDataSource.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\TestConnection.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\ui\BookingController.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\ui\ReportsController.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\util\ExportService.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\util\QRService.java
+C:\Users\ADMIN\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\util\Tx.java

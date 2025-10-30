@@ -1,0 +1,18 @@
+.seat-node {
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-width: 1;
+    -fx-border-color: #555555;
+    -fx-cursor: hand;
+}
+.seat-standard { -fx-background-color: #a9d18e; }
+.seat-standard:hover { -fx-background-color: #c5e0b4; }
+.seat-vip { -fx-background-color: #ffd966; }
+.seat-vip:hover { -fx-background-color: #ffe187; }
+.seat-couple { -fx-background-color: #f4b183; }
+.seat-couple:hover { -fx-background-color: #f8cbad; }
+.seat-booked { -fx-background-color: #bfbfbf; -fx-border-color: #808080; -fx-cursor: default; }
+.seat-selected { -fx-background-color: #ff0000; -fx-border-color: #c00000; -fx-text-fill: white; }
+.seat-selected:hover { -fx-background-color: #ff3333; }
