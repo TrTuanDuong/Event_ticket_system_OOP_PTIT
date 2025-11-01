@@ -1,27 +1,12 @@
 # 🗄️ DATABASE SETUP GUIDE
 
-> Hướng dẫn setup database PostgreSQL cho team - **5 PHÚT**
-> **File cần dùng**: `cinema_dump.sql` (đã có sẵn trong repo)
+> **Thời gian setup**: 2 phút ⚡  
+> **File sử dụng**: `cinema_dump.sql` (có sẵn trong repo)  
+> **Cập nhật**: Tháng 11/2025
 
 ---
 
-## 📌 DÀNH CHO AI?
-
-### 👥 Team Members (B, C, D):
-
-- ✅ Làm theo hướng dẫn này
-- ✅ Import file `cinema_dump.sql`
-- ✅ 5 phút là xong!
-
-### 👨‍💼 Member A (Ông Chủ):
-
-- ✅ Làm theo hướng dẫn này (lần đầu)
-- ✅ Dùng `export-database.sh` để update database
-- ✅ Commit file `.sql` mới lên GitHub
-
----
-
-## ⚡ QUICK START
+## 📌 QUICK START (2 BƯỚC)
 
 ### Bước 1: Tạo database
 
@@ -29,38 +14,27 @@
 createdb cinema
 ```
 
-Nếu bị lỗi permission, dùng postgres user:
-
-```bash
-createdb -U postgres cinema
-```
-
----
-
 ### Bước 2: Import dump file
 
 ```bash
-cd eventfx
 psql -d cinema < database/cinema_dump.sql
 ```
 
-Hoặc với username cụ thể:
+**Xác nhận thành công**:
 
 ```bash
-psql -U postgres -d cinema < database/cinema_dump.sql
+psql -d cinema -c "SELECT COUNT(*) FROM api_movie;"
+# Output: 6 ✅
 ```
 
-**Expected**: Thấy output `COPY 6`, `COPY 160`, `COPY 2`...
+**Done!** Database đã sẵn sàng với:
 
----
-
-### Bước 3: Verify
-
-```bash
-psql -d cinema -c "SELECT COUNT(*) FROM api_movie"
-```
-
-**Expected**: `6` movies ✅
+- ✅ 10+ tables
+- ✅ 6 movies mẫu
+- ✅ 160 showtimes
+- ✅ 2 users (admin + user1)
+- ✅ 3 auditoriums
+- ✅ All relationships & indexes
 
 ---
 
@@ -230,6 +204,7 @@ bash export-database.sh
 ```
 
 **Output**:
+
 ```
 🗄️  Exporting database 'cinema'...
 📦 Exporting full dump...

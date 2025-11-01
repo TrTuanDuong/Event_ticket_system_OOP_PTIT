@@ -6,6 +6,7 @@ import com.ptit.ticketing.util.Tx;
 
 import javax.sql.DataSource;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -46,5 +47,13 @@ public class SeatService extends BaseService {
      */
     public int countAvailableSeats(UUID showtimeId, UUID auditoriumId) {
         return Tx.withTx(ds, conn -> seatRepo.countAvailableSeats(conn, showtimeId, auditoriumId));
+    }
+
+    /**
+     * Get IDs của tất cả ghế đã được book cho showtime
+     * Dùng cho real-time updates
+     */
+    public Set<UUID> getBookedSeatIds(UUID showtimeId) {
+        return Tx.withTx(ds, conn -> seatRepo.getBookedSeatIds(conn, showtimeId));
     }
 }

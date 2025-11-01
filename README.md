@@ -2,9 +2,22 @@
 
 > **Dự án OOP - PTIT**  
 > **Tech Stack**: Java 21 + JavaFX 22 + PostgreSQL 16 + Maven  
-> **Team**: 4 members | **Timeline**: 10 days | **Progress**: 40% ✅
+> **Timeline**: 10 days | **Progress**: 85% ✅  
+> **Status**: Fully Functional with Admin Panel, Booking System, QR Payment Approval
 
-Ứng dụng quản lý rạp chiếu phim desktop sử dụng JavaFX, kết nối **trực tiếp** với PostgreSQL database.
+Ứng dụng quản lý rạp chiếu phim desktop hiện đại sử dụng JavaFX, kết nối **trực tiếp** với PostgreSQL database.
+
+## ✨ Tính năng nổi bật
+
+- ✅ **Quản lý Phim**: CRUD phim với thể loại, đạo diễn, poster
+- ✅ **Quản lý Suất chiếu**: Tạo, sửa, xóa lịch chiếu với validation
+- ✅ **Quản lý Phòng chiếu**: CRUD auditorium với cấu hình ghế
+- ✅ **Đặt vé**: Booking với timer 10 phút, chọn ghế interactive
+- ✅ **Thanh toán QR**: Workflow phê duyệt payment từ admin
+- ✅ **Admin Panel**: Dashboard quản lý toàn diện
+- ✅ **Authentication**: Login/Register với Django password hash
+- ✅ **Session Management**: Tự động logout sau timeout
+- ✅ **Statistics**: Thống kê movies, users, bookings
 
 ---
 
@@ -53,98 +66,245 @@
 
 ## 🚀 QUICK START
 
-### 1. Đọc documentation (15 phút)
-
-```bash
-# Đọc overview trước
-open PROJECT_OVERVIEW.md
-
-# Sau đó đọc development guide
-open DEVELOPMENT_GUIDE.md
-```
-
-### 2. Cài đặt môi trường (30 phút)
+### Prerequisites
 
 ```bash
 # Check requirements
-java -version    # Need Java 21+
-mvn --version    # Need Maven 3.8+
-psql --version   # Need PostgreSQL 14+
-
-# Install Maven (nếu chưa có)
-brew install maven
+java -version    # Cần Java 21+
+mvn --version    # Cần Maven 3.8+
+psql --version   # Cần PostgreSQL 14+
 ```
 
-### 3. Setup database (10 phút)
+### Cài đặt nhanh (5 phút)
 
 ```bash
-# Create database
-psql -U postgres -c "CREATE DATABASE cinema;"
+# 1. Clone repository
+git clone https://github.com/TrTuanDuong/Event_ticket_system_OOP_PTIT.git
+cd Event_ticket_system_OOP_PTIT
 
-# Run Django migrations (tạo tables)
-cd "../Bản sao BTL_CSDL_PTIT/backend"
-source venv/bin/activate
-python manage.py migrate
-python manage.py seed_data
-```
+# 2. Import database (đã có sẵn dump file)
+createdb cinema
+psql -d cinema < database/cinema_dump.sql
 
-### 4. Chạy dự án (2 phút)
+# 3. Cấu hình database trong application.properties
+# src/main/resources/application.properties
+# Sửa db.user và db.password nếu cần
 
-```bash
-cd eventfx
-
-# Compile & Run
+# 4. Build và chạy
 mvn clean compile
 mvn javafx:run
+```
+
+### Login mặc định
+
+```
+Admin:
+- Username: admin
+- Password: admin123
+
+User:
+- Username: user1
+- Password: user123
 ```
 
 **Expected**: Cửa sổ JavaFX hiển thị danh sách movies & showtimes ✅
 
 ---
 
-## 🧪 TEST NHANH
+## 🏗️ KIẾN TRÚC & DESIGN PATTERNS
+
+### 3-Layer Architecture
+
+```
+┌─────────────────────────────────┐
+│   PRESENTATION LAYER (UI)       │
+│   - FXML files                  │
+│   - Controllers                 │
+│   - JavaFX components           │
+└─────────────────────────────────┘
+            ↓ calls
+┌─────────────────────────────────┐
+│   BUSINESS LAYER (Services)     │
+│   - MovieService                │
+│   - BookingService              │
+│   - AuthService                 │
+│   - SessionManager              │
+└─────────────────────────────────┘
+            ↓ calls
+┌─────────────────────────────────┐
+│   DATA LAYER (Repositories)     │
+│   - UserRepo, MovieRepo         │
+│   - ShowtimeRepo, BookingRepo   │
+│   - Database connection pool    │
+└─────────────────────────────────┘
+            ↓ connects
+┌─────────────────────────────────┐
+│   PostgreSQL Database           │
+│   - 10+ tables                  │
+│   - Relationships & indexes     │
+└─────────────────────────────────┘
+```
+
+### Design Patterns Applied
+
+1. **Singleton**: Database connection pool, SessionManager, SessionTimer
+2. **Template Method**: BaseRepo, BaseService
+3. **Repository**: Data access abstraction
+4. **MVC**: Model-View-Controller separation
+5. **Dependency Injection**: Services injected vào controllers
+
+## 🗄️ DATABASE SCHEMA
+
+### Tables (10+)
+
+- `api_user`: Users & Admins
+- `api_movie`: Movies catalog
+- `api_genre`: Movie genres
+- `api_moviegenre`: Many-to-many relationship
+- `api_auditorium`: Cinema halls
+- `api_seat`: Seats configuration
+- `api_showtime`: Movie showtimes
+- `api_booking`: Booking records
+- `api_ticket`: Individual tickets
+
+### Key Relationships
+
+```
+User ─1:N→ Booking ─1:N→ Ticket ─N:1→ Seat
+Movie ─1:N→ Showtime ←N:1─ Auditorium ─1:N→ Seat
+Movie ─N:M→ Genre (via moviegenre)
+Booking ─N:1→ Showtime
+```
+
+## 🧪 TESTING
 
 ```bash
-# Test database connection (1 command)
-bash test-db.sh
+# Test database connection
+psql -d cinema -c "SELECT COUNT(*) FROM api_movie;"
 
-# Test Java code
-mvn exec:java -Dexec.mainClass="com.ptit.ticketing.TestConnection"
+# Compile project
+mvn clean compile
+
+# Run tests
+mvn test
+
+# Run application
+mvn javafx:run
 ```
 
 ---
 
-## 📊 TIẾN ĐỘ DỰ ÁN: 40% ✅
+## 📊 TIẾN ĐỘ DỰ ÁN: 85% ✅
 
-**Đã hoàn thành**: Database (10+ tables), Connection Pool, Domain Models (7 entities), Repositories (4 repos), Authentication, Test UI
+### ✅ Hoàn thành (85%)
 
-**Đang làm (Day 4-6)**: SessionManager, MovieService, ShowtimeService, Login UI, Dashboard
+**Backend & Data Layer**:
 
-**Chi tiết đầy đủ** → Xem [PROJECT_OVERVIEW.md](PROJECT_OVERVIEW.md) phần **"📊 CHI TIẾT CÁC THÀNH PHẦN ĐÃ HOÀN THÀNH"**
+- ✅ Database schema (10+ tables with relationships)
+- ✅ Connection pool (HikariCP + Singleton)
+- ✅ Domain models (7 entities)
+- ✅ Repository layer (UserRepo, MovieRepo, ShowtimeRepo, BookingRepo, SeatRepo)
+- ✅ Transaction utility (Tx.java)
+
+**Business Logic Layer**:
+
+- ✅ AuthService (Login/Register với Django password)
+- ✅ SessionManager (10-minute booking timer, auto-logout)
+- ✅ MovieService (CRUD movies với genres)
+- ✅ ShowtimeService (CRUD showtimes với validation)
+- ✅ BookingService (QR payment approval workflow)
+
+**UI Layer**:
+
+- ✅ Login/Register screens
+- ✅ Dashboard (User & Admin views)
+- ✅ Movie List (Search, filter)
+- ✅ Showtime List
+- ✅ Seat Map (Interactive selection với timer)
+- ✅ Payment screen (QR/Cash với timer)
+- ✅ Admin Panel (Movies, Users, Showtimes, Auditoriums, Bookings, QR Approval, Statistics)
+- ✅ Profile Settings (Update info, change password, logout)
+- ✅ My Bookings (View booking history)
+
+### � Đang phát triển (15%)
+
+- 🔄 Ticket QR Code generation
+- 🔄 Seat availability real-time updates
+- 🔄 Advanced statistics & reports
+- 🔄 Email notifications
+- 🔄 Export booking data to PDF/Excel
 
 ---
 
-## 📁 CẤU TRÚC PROJECT (Tóm tắt)
+## 📁 CẤU TRÚC PROJECT
 
 ```
-eventfx/
+Event_ticket_system_OOP_PTIT/
 ├── src/main/
 │   ├── java/com/ptit/ticketing/
-│   │   ├── App.java                 # Entry point ✅
-│   │   ├── config/Database.java     # HikariCP connection pool ✅
-│   │   ├── domain/                  # 7 entities ✅
-│   │   ├── repo/                    # 4 repositories ✅
-│   │   ├── service/                 # 2/7 services 🚧
-│   │   ├── auth/                    # Django password verification ✅
-│   │   └── util/Tx.java            # Transaction helper ✅
+│   │   ├── MainApp.java                    # ✅ Entry point
+│   │   ├── config/
+│   │   │   └── Database.java              # ✅ HikariCP connection pool
+│   │   ├── domain/                         # ✅ 7 entities
+│   │   │   ├── User.java
+│   │   │   ├── Movie.java
+│   │   │   ├── Showtime.java
+│   │   │   ├── Auditorium.java
+│   │   │   ├── Seat.java
+│   │   │   ├── Booking.java
+│   │   │   └── Ticket.java
+│   │   ├── repo/                           # ✅ Data Access Layer
+│   │   │   ├── BaseRepo.java
+│   │   │   ├── UserRepo.java
+│   │   │   ├── MovieRepo.java
+│   │   │   ├── ShowtimeRepo.java
+│   │   │   ├── BookingRepo.java
+│   │   │   └── SeatRepo.java
+│   │   ├── service/                        # ✅ Business Logic
+│   │   │   ├── BaseService.java
+│   │   │   ├── AuthService.java
+│   │   │   ├── SessionManager.java
+│   │   │   ├── SessionTimer.java
+│   │   │   ├── MovieService.java
+│   │   │   ├── ShowtimeService.java
+│   │   │   └── BookingService.java
+│   │   ├── ui/                             # ✅ Controllers
+│   │   │   ├── LoginController.java
+│   │   │   ├── RegisterController.java
+│   │   │   ├── DashboardController.java
+│   │   │   ├── MovieListController.java
+│   │   │   ├── EventController.java
+│   │   │   ├── SeatMapController.java
+│   │   │   ├── PaymentController.java
+│   │   │   ├── AdminPanelController.java
+│   │   │   ├── ProfileSettingsController.java
+│   │   │   └── MyBookingsController.java
+│   │   ├── auth/
+│   │   │   └── DjangoPassword.java        # ✅ PBKDF2-SHA256
+│   │   └── util/
+│   │       └── Tx.java                    # ✅ Transaction helper
 │   └── resources/
-│       ├── application.properties   # DB config ✅
-│       └── ui/                      # FXML files (TODO) ❌
-├── test-db.sh                       # Database test script ✅
-└── pom.xml                          # Maven config ✅
+│       ├── application.properties          # ✅ DB config
+│       └── ui/                             # ✅ FXML files
+│           ├── login.fxml
+│           ├── register.fxml
+│           ├── dashboard.fxml
+│           ├── movie-list.fxml
+│           ├── EventView.fxml
+│           ├── SeatMap.fxml
+│           ├── payment.fxml
+│           ├── admin-panel.fxml
+│           ├── profile-settings.fxml
+│           └── my-bookings.fxml
+├── database/
+│   ├── cinema_dump.sql                     # ✅ Full database dump
+│   ├── cinema_schema.sql                   # ✅ Schema only
+│   └── README.md                           # ✅ Database setup guide
+├── pom.xml                                 # ✅ Maven dependencies
+├── README.md                               # ✅ Main documentation (this file)
+├── OVERVIEW.md                             # ✅ Project overview
+└── Chạy.md                                 # ✅ Development guide
 ```
-
-**Chi tiết đầy đủ** → Xem [PROJECT_OVERVIEW.md](PROJECT_OVERVIEW.md) phần **"📁 CẤU TRÚC DỰ ÁN"**
 
 ---
 
@@ -177,16 +337,114 @@ java -version
 
 ---
 
-## 🎯 NEXT STEPS (Member A - Day 4)
+## 🎯 TÍNH NĂNG CHI TIẾT
 
-1. **SessionManager.java** (1h) - Quản lý user session
-2. **MovieService.java** (2h) - Business logic cho movies
-3. **ShowtimeService.java** (2h) - Business logic cho showtimes
+### 🔐 Authentication & Authorization
 
-**Hướng dẫn develop chi tiết với code templates** → Xem [DEVELOPMENT_GUIDE.md](DEVELOPMENT_GUIDE.md) phần **"💡 HƯỚNG DẪN DEVELOP"**
+- Login với Django PBKDF2-SHA256 password verification
+- Register tài khoản mới với validation
+- Session management với auto-logout
+- Role-based access (Admin/User)
+
+### 👤 User Features
+
+- **Dashboard**: Xem movies đang chiếu, upcoming showtimes
+- **Movie List**: Search, filter phim theo thể loại
+- **Booking Flow**:
+  1. Chọn phim → Xem showtimes
+  2. Chọn suất chiếu → Seat map interactive
+  3. Chọn ghế (Standard/VIP/Couple) với timer 10 phút
+  4. Thanh toán (QR Code/Cash)
+  5. Nhận booking confirmation
+- **My Bookings**: Xem lịch sử đặt vé
+- **Profile**: Cập nhật thông tin, đổi password
+
+### 👨‍💼 Admin Features
+
+- **Movies Management**: CRUD phim với poster, thể loại, thời lượng
+- **Showtimes Management**: Tạo/sửa/xóa lịch chiếu với validation trùng lịch
+- **Auditoriums Management**: Quản lý phòng chiếu và cấu hình ghế
+- **Users Management**: Xem và quản lý tài khoản
+- **Bookings Management**: Xem chi tiết booking và tickets
+- **QR Payment Approval**: Phê duyệt/từ chối thanh toán QR
+- **Statistics**: Dashboard thống kê tổng quan
+
+### ⏱️ Special Features
+
+- **10-Minute Booking Timer**: Tự động hủy booking khi hết thời gian
+- **QR Payment Workflow**: Pending → Admin Approval → Confirmed
+- **Real-time Seat Updates**: Auto-refresh seat availability mỗi 5 giây
+- **Session Timer**: Auto-logout khi inactive
+- **Password Security**: Django-compatible PBKDF2 hashing
+
+## 🆘 TROUBLESHOOTING
+
+### ❌ "Connection refused"
+
+```bash
+# Check PostgreSQL running
+brew services list | grep postgresql
+# Start if needed
+brew services start postgresql@16
+```
+
+### ❌ "Database does not exist"
+
+```bash
+createdb cinema
+psql -d cinema < database/cinema_dump.sql
+```
+
+### ❌ "Password authentication failed"
+
+Sửa `src/main/resources/application.properties`:
+
+```properties
+db.user=your_postgres_username
+db.password=your_postgres_password
+```
+
+### ❌ "Maven plugin error"
+
+```bash
+mvn clean install -U
+```
+
+### ❌ JavaFX runtime error
+
+Ensure Java 21+ installed:
+
+```bash
+java -version
+# Should show: openjdk version "21.x.x"
+```
+
+## 📚 DOCUMENTATION
+
+- **README.md** (this file): Quick start & overview
+- **[Chạy.md](Chạy.md)**: Detailed development guide
+- **[OVERVIEW.md](OVERVIEW.md)**: Project architecture & patterns
+- **[database/README.md](database/README.md)**: Database setup guide
+
+## 🤝 CONTRIBUTING
+
+1. Fork repository
+2. Create feature branch: `git checkout -b feature/new-feature`
+3. Commit changes: `git commit -m "Add new feature"`
+4. Push to branch: `git push origin feature/new-feature`
+5. Create Pull Request
+
+## 📞 CONTACT & SUPPORT
+
+- **Repository**: https://github.com/TrTuanDuong/Event_ticket_system_OOP_PTIT
+- **Issues**: [GitHub Issues](https://github.com/TrTuanDuong/Event_ticket_system_OOP_PTIT/issues)
 
 ---
 
 ## 📝 LICENSE
 
 Educational project - PTIT University
+
+---
+
+**Made with ❤️ by PTIT Students** | **Java 21 + JavaFX 22 + PostgreSQL 16**

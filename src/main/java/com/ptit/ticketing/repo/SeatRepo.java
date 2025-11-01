@@ -4,10 +4,7 @@ import com.ptit.ticketing.domain.Seat;
 
 import javax.sql.DataSource;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Repository cho Seat entity
@@ -105,6 +102,25 @@ public class SeatRepo {
                 return rs.getInt(1);
             }
             return 0;
+        }
+    }
+
+    /**
+     * Get IDs của tất cả ghế đã được book cho showtime
+     * Dùng cho real-time seat availability updates
+     */
+    public Set<UUID> getBookedSeatIds(Connection conn, UUID showtimeId) throws SQLException {
+        String sql = "SELECT DISTINCT seat_id FROM api_ticket WHERE showtime_id = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setObject(1, showtimeId);
+            ResultSet rs = stmt.executeQuery();
+
+            Set<UUID> bookedSeats = new HashSet<>();
+            while (rs.next()) {
+                bookedSeats.add((UUID) rs.getObject("seat_id"));
+            }
+            return bookedSeats;
         }
     }
 }
