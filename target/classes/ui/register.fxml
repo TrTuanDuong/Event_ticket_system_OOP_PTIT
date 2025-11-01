@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="com.ptit.ticketing.ui.RegisterController"
+    prefHeight="700.0" prefWidth="900.0"
+    style="-fx-background-color: linear-gradient(to bottom right, #667eea 0%, #764ba2 100%);">
+
+    <!-- Center: Register Form -->
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true"
+            style="-fx-background-color: transparent; -fx-background: transparent;"
+            pannable="false">
+            <StackPane>
+                <VBox alignment="CENTER" spacing="20"
+                    style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 20, 0, 0, 5);"
+                    maxWidth="500" maxHeight="680">
+                    <padding>
+                        <Insets top="40" right="50" bottom="40" left="50" />
+                    </padding>
+
+                    <!-- Logo/Title -->
+                    <VBox alignment="CENTER" spacing="10">
+                        <Label text="🎬" style="-fx-font-size: 42px;" />
+                        <Label text="Create Account"
+                            style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #667eea;" />
+                        <Label text="Join Cinema Management System"
+                            style="-fx-font-size: 13px; -fx-text-fill: #888888;" />
+                    </VBox>
+
+                    <!-- Error/Success Label -->
+                    <Label fx:id="messageLabel"
+                        style="-fx-text-fill: #e74c3c; -fx-background-color: #fee; -fx-padding: 10; -fx-background-radius: 5;"
+                        wrapText="true" visible="false" />
+
+                    <!-- Username Field -->
+                    <VBox spacing="6">
+                        <Label text="Username *"
+                            style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+                        <TextField fx:id="usernameField"
+                            promptText="Choose a username"
+                            style="-fx-font-size: 13px; -fx-padding: 10; -fx-background-radius: 8; -fx-border-color: #dddddd; -fx-border-radius: 8; -fx-border-width: 1;"
+                            prefWidth="400" />
+                    </VBox>
+
+                    <!-- Email Field -->
+                    <VBox spacing="6">
+                        <Label text="Email *"
+                            style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+                        <TextField fx:id="emailField"
+                            promptText="your.email@example.com"
+                            style="-fx-font-size: 13px; -fx-padding: 10; -fx-background-radius: 8; -fx-border-color: #dddddd; -fx-border-radius: 8; -fx-border-width: 1;"
+                            prefWidth="400" />
+                    </VBox>
+
+                    <!-- Full Name Field -->
+                    <VBox spacing="6">
+                        <Label text="Full Name"
+                            style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+                        <TextField fx:id="fullNameField"
+                            promptText="Your full name (optional)"
+                            style="-fx-font-size: 13px; -fx-padding: 10; -fx-background-radius: 8; -fx-border-color: #dddddd; -fx-border-radius: 8; -fx-border-width: 1;"
+                            prefWidth="400" />
+                    </VBox>
+
+                    <!-- Phone Field -->
+                    <VBox spacing="6">
+                        <Label text="Phone Number"
+                            style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+                        <TextField fx:id="phoneField"
+                            promptText="Your phone number (optional)"
+                            style="-fx-font-size: 13px; -fx-padding: 10; -fx-background-radius: 8; -fx-border-color: #dddddd; -fx-border-radius: 8; -fx-border-width: 1;"
+                            prefWidth="400" />
+                    </VBox>
+
+                    <!-- Password Field -->
+                    <VBox spacing="6">
+                        <Label text="Password *"
+                            style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+                        <PasswordField fx:id="passwordField"
+                            promptText="At least 6 characters"
+                            style="-fx-font-size: 13px; -fx-padding: 10; -fx-background-radius: 8; -fx-border-color: #dddddd; -fx-border-radius: 8; -fx-border-width: 1;"
+                            prefWidth="400" />
+                    </VBox>
+
+                    <!-- Confirm Password Field -->
+                    <VBox spacing="6">
+                        <Label text="Confirm Password *"
+                            style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+                        <PasswordField fx:id="confirmPasswordField"
+                            promptText="Re-enter your password"
+                            style="-fx-font-size: 13px; -fx-padding: 10; -fx-background-radius: 8; -fx-border-color: #dddddd; -fx-border-radius: 8; -fx-border-width: 1;"
+                            prefWidth="400" />
+                    </VBox>
+
+                    <!-- Register Button -->
+                    <Button fx:id="registerButton"
+                        text="Create Account"
+                        onAction="#handleRegister"
+                        defaultButton="true"
+                        style="-fx-background-color: linear-gradient(to right, #27ae60, #229954); -fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold; -fx-padding: 13; -fx-background-radius: 8; -fx-cursor: hand;"
+                        prefWidth="400">
+                        <font>
+                            <Font name="System Bold" size="15.0" />
+                        </font>
+                    </Button>
+
+                    <!-- Back to Login -->
+                    <HBox alignment="CENTER" spacing="5">
+                        <Label text="Already have an account?"
+                            style="-fx-font-size: 12px; -fx-text-fill: #666666;" />
+                        <Button text="Login here"
+                            onAction="#handleBackToLogin"
+                            style="-fx-background-color: transparent; -fx-text-fill: #667eea; -fx-font-size: 12px; -fx-cursor: hand; -fx-underline: true; -fx-font-weight: bold;" />
+                    </HBox>
+
+                </VBox>
+            </StackPane>
+        </ScrollPane>
+    </center>
+
+    <!-- Bottom: Copyright -->
+    <bottom>
+        <Label text="© 2025 Cinema Management System - PTIT OOP Project"
+            style="-fx-text-fill: white; -fx-font-size: 11px; -fx-padding: 20;"
+            BorderPane.alignment="CENTER" />
+    </bottom>
+
+</BorderPane>

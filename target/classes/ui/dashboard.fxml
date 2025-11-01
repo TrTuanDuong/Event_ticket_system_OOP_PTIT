@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="com.ptit.ticketing.ui.DashboardController"
+    prefHeight="800.0" prefWidth="1200.0"
+    style="-fx-background-color: #f5f7fa;">
+
+    <!-- Top: Header -->
+    <top>
+        <VBox
+            style="-fx-background-color: linear-gradient(to right, #667eea, #764ba2); -fx-padding: 30;">
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <Label text="🎬" style="-fx-font-size: 32px;" />
+                <VBox>
+                    <Label fx:id="welcomeLabel" text="Welcome back, User!"
+                        style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;" />
+                    <Label fx:id="roleLabel" text="Role: Customer"
+                        style="-fx-text-fill: rgba(255,255,255,0.9); -fx-font-size: 14px;" />
+                </VBox>
+                <Region HBox.hgrow="ALWAYS" />
+                <Button text="⚙️ Settings" onAction="#handleSettings"
+                    style="-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-background-radius: 8; -fx-cursor: hand;">
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                </Button>
+                <Button fx:id="logoutButton" text="Logout" onAction="#handleLogout"
+                    style="-fx-background-color: rgba(231, 76, 60, 0.9); -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-background-radius: 8; -fx-cursor: hand;">
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                </Button>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- Center: Main Content -->
+    <center>
+        <ScrollPane fitToWidth="true"
+            style="-fx-background: #f5f7fa; -fx-background-color: #f5f7fa;">
+            <VBox alignment="CENTER" spacing="40" style="-fx-padding: 50;">
+
+                <!-- Title -->
+                <Label text="What would you like to do?"
+                    style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+
+                <!-- Menu Grid -->
+                <GridPane alignment="CENTER" hgap="30" vgap="30" maxWidth="900">
+
+                    <!-- Browse Movies Card -->
+                    <VBox GridPane.columnIndex="0" GridPane.rowIndex="0"
+                        alignment="CENTER" spacing="20"
+                        style="-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 40; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 15, 0, 0, 5); -fx-cursor: hand;"
+                        onMouseClicked="#handleBrowseMovies"
+                        prefWidth="250" prefHeight="250">
+                        <Label text="🎬" style="-fx-font-size: 64px;" />
+                        <Label text="Browse Movies"
+                            style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #667eea;" />
+                        <Label text="Explore available movies and showtimes"
+                            wrapText="true" alignment="CENTER"
+                            style="-fx-font-size: 13px; -fx-text-fill: #7f8c8d; -fx-text-alignment: center;" />
+                        <Button fx:id="browseMoviesButton" text="View Movies"
+                            onAction="#handleBrowseMovies"
+                            style="-fx-background-color: linear-gradient(to right, #667eea, #764ba2); -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 12 30; -fx-background-radius: 8; -fx-cursor: hand;">
+                            <font>
+                                <Font name="System Bold" size="14.0" />
+                            </font>
+                        </Button>
+                    </VBox>
+
+                    <!-- My Bookings Card -->
+                    <VBox GridPane.columnIndex="1" GridPane.rowIndex="0"
+                        alignment="CENTER" spacing="20"
+                        style="-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 40; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 15, 0, 0, 5); -fx-cursor: hand;"
+                        onMouseClicked="#handleMyBookings"
+                        prefWidth="250" prefHeight="250">
+                        <Label text="🎫" style="-fx-font-size: 64px;" />
+                        <Label text="My Bookings"
+                            style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #f39c12;" />
+                        <Label text="View your booking history and tickets"
+                            wrapText="true" alignment="CENTER"
+                            style="-fx-font-size: 13px; -fx-text-fill: #7f8c8d; -fx-text-alignment: center;" />
+                        <Button fx:id="myBookingsButton" text="View Bookings"
+                            onAction="#handleMyBookings"
+                            style="-fx-background-color: linear-gradient(to right, #f39c12, #f8b739); -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 12 30; -fx-background-radius: 8; -fx-cursor: hand;">
+                            <font>
+                                <Font name="System Bold" size="14.0" />
+                            </font>
+                        </Button>
+                    </VBox>
+
+                    <!-- Admin Panel Card (visible for admin only) -->
+                    <VBox fx:id="adminButton" GridPane.columnIndex="0" GridPane.rowIndex="1"
+                        alignment="CENTER" spacing="20"
+                        style="-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 40; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 15, 0, 0, 5); -fx-cursor: hand;"
+                        onMouseClicked="#handleAdmin"
+                        prefWidth="250" prefHeight="250">
+                        <Label text="⚙️" style="-fx-font-size: 64px;" />
+                        <Label text="Admin Panel"
+                            style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #e74c3c;" />
+                        <Label text="Manage movies, showtimes, and reports"
+                            wrapText="true" alignment="CENTER"
+                            style="-fx-font-size: 13px; -fx-text-fill: #7f8c8d; -fx-text-alignment: center;" />
+                        <Button text="Open Admin" onAction="#handleAdmin"
+                            style="-fx-background-color: linear-gradient(to right, #e74c3c, #c0392b); -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 12 30; -fx-background-radius: 8; -fx-cursor: hand;">
+                            <font>
+                                <Font name="System Bold" size="14.0" />
+                            </font>
+                        </Button>
+                    </VBox>
+
+                </GridPane>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <!-- Bottom: Footer -->
+    <bottom>
+        <HBox alignment="CENTER" style="-fx-padding: 20; -fx-background-color: white;">
+            <Label text="© 2025 Cinema Management System - PTIT OOP Project"
+                style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;" />
+        </HBox>
+    </bottom>
+
+</BorderPane>

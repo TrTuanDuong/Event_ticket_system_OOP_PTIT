@@ -1,24 +1,39 @@
-C:\gptduan\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\auth\DjangoPassword.java
-C:\gptduan\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\config\Database.java
-C:\gptduan\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\domain\Auditorium.java
-C:\gptduan\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\domain\Booking.java
-C:\gptduan\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\domain\Movie.java
-C:\gptduan\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\domain\Seat.java
-C:\gptduan\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\domain\Showtime.java
-C:\gptduan\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\domain\Ticket.java
-C:\gptduan\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\domain\User.java
-C:\gptduan\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\MainApp.java
-C:\gptduan\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\repo\BaseRepo.java
-C:\gptduan\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\repo\BookingRepo.java
-C:\gptduan\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\repo\MovieRepo.java
-C:\gptduan\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\repo\SeatRepo.java
-C:\gptduan\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\repo\ShowtimeRepo.java
-C:\gptduan\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\repo\TicketRepo.java
-C:\gptduan\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\repo\UserRepo.java
-C:\gptduan\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\service\AuthService.java
-C:\gptduan\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\service\BaseService.java
-C:\gptduan\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\service\BookingService.java
-C:\gptduan\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\TestConnection.java
-C:\gptduan\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\ui\EventController.java
-C:\gptduan\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\ui\SeatMapController.java
-C:\gptduan\Event_ticket_system_OOP_PTIT\src\main\java\com\ptit\ticketing\util\Tx.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/MainApp.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/TestConnection.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/auth/DjangoPassword.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/config/Database.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/domain/Auditorium.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/domain/Booking.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/domain/Genre.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/domain/Movie.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/domain/Seat.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/domain/Showtime.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/domain/Ticket.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/domain/User.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/repo/BaseRepo.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/repo/BookingRepo.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/repo/MovieRepo.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/repo/SeatRepo.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/repo/ShowtimeRepo.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/repo/TicketRepo.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/repo/UserRepo.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/service/AuthService.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/service/BaseService.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/service/BookingService.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/service/MovieService.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/service/SeatService.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/service/SessionManager.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/service/SessionTimer.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/service/ShowtimeService.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/ui/AdminPanelController.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/ui/DashboardController.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/ui/EventController.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/ui/LoginController.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/ui/MovieListController.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/ui/MyBookingsController.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/ui/PaymentController.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/ui/ProfileSettingsController.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/ui/RegisterController.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/ui/SeatMapController.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/ui/ShowtimeListController.java
+/Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/src/main/java/com/ptit/ticketing/util/Tx.java

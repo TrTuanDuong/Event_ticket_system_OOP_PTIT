@@ -1,0 +1,51 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------------< com.ptit.ticketing:eventfx >---------------------
+[INFO] Building eventfx 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ eventfx ---
+[INFO] Deleting /Users/trantuanduong/Documents/CNTT_PTIT/Học kỳ 5/Event_ticket_system_OOP_PTIT/target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ eventfx ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 6 resources from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ eventfx ---
+[INFO] Recompiling the module because of changed source code.
+[WARNING] File encoding has not been set, using platform encoding UTF-8, i.e. build is platform dependent!
+[INFO] Compiling 29 source files with javac [debug target 21] to target/classes
+[INFO] 
+[INFO] >>> javafx:0.0.8:run (default-cli) > process-classes @ eventfx >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ eventfx ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 6 resources from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ eventfx ---
+[INFO] Recompiling the module because of changed source code.
+[WARNING] File encoding has not been set, using platform encoding UTF-8, i.e. build is platform dependent!
+[INFO] Compiling 29 source files with javac [debug target 21] to target/classes
+[INFO] 
+[INFO] <<< javafx:0.0.8:run (default-cli) < process-classes @ eventfx <<<
+[INFO] 
+[INFO] 
+[INFO] --- javafx:0.0.8:run (default-cli) @ eventfx ---
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+✅ Database connection successful!
+   Connected to: jdbc:postgresql://localhost:5432/cinema
+✅ LoginController initialized
+✅ Application started - Login screen loaded
+2025-11-02 00:09:25.738 java[50714:4732874] error messaging the mach port for IMKCFRunLoopWakeUpReliable
+✅ User logged in: admin (user)
+✅ Login successful: admin
+⚠️ Dashboard not found, showing alert instead
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  30.043 s
+[INFO] Finished at: 2025-11-02T00:09:48+07:00
+[INFO] ------------------------------------------------------------------------

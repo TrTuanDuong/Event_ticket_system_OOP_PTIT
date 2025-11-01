@@ -111,6 +111,45 @@ public class BookingRepo extends BaseRepo {
     }
 
     /**
+     * Find bookings with pending approval status (QR payment waiting for admin)
+     */
+    public List<Booking> findPendingApproval(Connection c) throws SQLException {
+        String sql = """
+                SELECT b.id, b.user_id, b.showtime_id, b.status, b.total_amount,
+                    b.payment_method, b.created_at, b.expires_at,
+                    u.username as user_name,
+                    m.title as movie_title,
+                    s.start_time as showtime_start
+                FROM api_booking b
+                JOIN api_user u ON b.user_id = u.id
+                JOIN api_showtime s ON b.showtime_id = s.id
+                JOIN api_movie m ON s.movie_id = m.id
+                WHERE b.status = 'pending_approval' AND b.payment_method = 'qr_code'
+                ORDER BY b.created_at ASC
+                """;
+        try (PreparedStatement st = c.prepareStatement(sql);
+                ResultSet rs = st.executeQuery()) {
+            List<Booking> bookings = new ArrayList<>();
+            while (rs.next()) {
+                bookings.add(mapRow(rs));
+            }
+            return bookings;
+        }
+    }
+
+    /**
+     * Update booking status (for admin approval)
+     */
+    public int updateStatus(Connection c, UUID bookingId, String newStatus) throws SQLException {
+        String sql = "UPDATE api_booking SET status = ? WHERE id = ?";
+        try (PreparedStatement st = c.prepareStatement(sql)) {
+            st.setString(1, newStatus);
+            st.setObject(2, bookingId);
+            return st.executeUpdate();
+        }
+    }
+
+    /**
      * Find booking by ID
      */
     public Optional<Booking> findById(Connection c, UUID id) throws SQLException {

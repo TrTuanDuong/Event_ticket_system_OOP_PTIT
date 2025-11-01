@@ -12,6 +12,7 @@ public class Tx {
 
   public static <T> T withTx(DataSource ds, SqlFunction<Connection, T> fn) {
     try (Connection c = ds.getConnection()) {
+      c.setAutoCommit(false); // ← FIX: Disable auto-commit for transaction
       try {
         T r = fn.apply(c);
         c.commit();

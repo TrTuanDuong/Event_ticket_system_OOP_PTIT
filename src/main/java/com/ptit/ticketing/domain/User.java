@@ -1,6 +1,7 @@
 package com.ptit.ticketing.domain;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -19,6 +20,7 @@ public class User {
     private LocalDate dateOfBirth;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
+    private LocalDateTime dateJoined;
     private boolean isActive;
     private boolean isStaff;
     private boolean isSuperuser;
@@ -102,6 +104,14 @@ public class User {
 
     public void setUpdatedAt(OffsetDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public LocalDateTime getDateJoined() {
+        return dateJoined;
+    }
+
+    public void setDateJoined(LocalDateTime dateJoined) {
+        this.dateJoined = dateJoined;
     }
 
     public boolean isActive() {

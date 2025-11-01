@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+    xmlns:fx="http://javafx.com/fxml"
+    fx:controller="com.ptit.ticketing.ui.AdminPanelController"
+    prefHeight="800.0" prefWidth="1200.0"
+    style="-fx-background-color: #f5f7fa;">
+
+    <!-- Header -->
+    <top>
+        <VBox spacing="10"
+            style="-fx-background-color: linear-gradient(to right, #667eea, #764ba2); -fx-padding: 20;">
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Button fx:id="backButton" text="← Back to Dashboard" onAction="#handleBack"
+                    style="-fx-background-color: white; -fx-text-fill: #667eea; -fx-font-size: 14px; -fx-padding: 10 20; -fx-background-radius: 5; -fx-cursor: hand;" />
+
+                <Region HBox.hgrow="ALWAYS" />
+
+                <Label text="ADMIN PANEL"
+                    style="-fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold;" />
+
+                <Region HBox.hgrow="ALWAYS" />
+
+                <Label fx:id="adminNameLabel" text="Admin Name"
+                    style="-fx-text-fill: white; -fx-font-size: 14px;" />
+
+                <Button text="⚙️ Settings" onAction="#handleSettings"
+                    style="-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-background-radius: 5; -fx-cursor: hand;" />
+
+                <Button text="Logout" onAction="#handleLogout"
+                    style="-fx-background-color: rgba(231, 76, 60, 0.9); -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-background-radius: 5; -fx-cursor: hand;" />
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- Center - Tab Panel -->
+    <center>
+        <TabPane tabClosingPolicy="UNAVAILABLE" style="-fx-background-color: #f5f7fa;">
+
+            <!-- Tab Quản lý Phim -->
+            <Tab text="📽️ Quản lý Phim">
+                <VBox spacing="20" style="-fx-padding: 20;">
+                    <!-- Search & Add -->
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <TextField fx:id="movieSearchField" promptText="Tìm kiếm phim..."
+                            style="-fx-pref-width: 300; -fx-font-size: 14px; -fx-padding: 10;" />
+                        <Button text="🔍 Tìm" onAction="#handleSearchMovie"
+                            style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-background-radius: 5; -fx-cursor: hand;" />
+
+                        <Region HBox.hgrow="ALWAYS" />
+
+                        <Button text="➕ Thêm Phim Mới" onAction="#handleAddMovie"
+                            style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-background-radius: 5; -fx-cursor: hand; -fx-font-weight: bold;" />
+                    </HBox>
+
+                    <!-- Movie Table -->
+                    <ScrollPane fitToWidth="true" fitToHeight="true"
+                        style="-fx-background-color: transparent; -fx-background: transparent;">
+                        <VBox fx:id="movieListContainer" spacing="10" style="-fx-padding: 10;" />
+                    </ScrollPane>
+                </VBox>
+            </Tab>
+
+            <!-- Tab Quản lý Tài khoản -->
+            <Tab text="👥 Quản lý Tài khoản">
+                <VBox spacing="20" style="-fx-padding: 20;">
+                    <!-- Search & Add -->
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <TextField fx:id="userSearchField" promptText="Tìm kiếm user..."
+                            style="-fx-pref-width: 300; -fx-font-size: 14px; -fx-padding: 10;" />
+                        <Button text="🔍 Tìm" onAction="#handleSearchUser"
+                            style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-background-radius: 5; -fx-cursor: hand;" />
+
+                        <Region HBox.hgrow="ALWAYS" />
+
+                        <Button text="➕ Thêm User Mới" onAction="#handleAddUser"
+                            style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-background-radius: 5; -fx-cursor: hand; -fx-font-weight: bold;" />
+                    </HBox>
+
+                    <!-- User Table -->
+                    <ScrollPane fitToWidth="true" fitToHeight="true"
+                        style="-fx-background-color: transparent; -fx-background: transparent;">
+                        <VBox fx:id="userListContainer" spacing="10" style="-fx-padding: 10;" />
+                    </ScrollPane>
+                </VBox>
+            </Tab>
+
+            <!-- Tab Quản lý Suất chiếu -->
+            <Tab text="🎬 Quản lý Suất chiếu">
+                <VBox spacing="20" style="-fx-padding: 30;">
+                    <HBox alignment="CENTER_LEFT" spacing="20">
+                        <Label text="Quản lý Suất chiếu"
+                            style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button text="➕ Thêm Suất chiếu" onAction="#handleAddShowtime"
+                            style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-background-radius: 8; -fx-cursor: hand; -fx-font-weight: bold;">
+                            <font>
+                                <Font name="System Bold" size="14.0" />
+                            </font>
+                        </Button>
+                    </HBox>
+
+                    <ScrollPane fitToWidth="true"
+                        style="-fx-background: transparent; -fx-background-color: transparent;">
+                        <VBox fx:id="showtimeListContainer" spacing="15" style="-fx-padding: 10;" />
+                    </ScrollPane>
+                </VBox>
+            </Tab>
+
+            <!-- Tab Quản lý Phòng chiếu -->
+            <Tab text="🏛️ Quản lý Phòng">
+                <VBox spacing="20" style="-fx-padding: 30;">
+                    <HBox alignment="CENTER_LEFT" spacing="20">
+                        <Label text="Quản lý Phòng chiếu"
+                            style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button text="➕ Thêm Phòng" onAction="#handleAddAuditorium"
+                            style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-background-radius: 8; -fx-cursor: hand; -fx-font-weight: bold;">
+                            <font>
+                                <Font name="System Bold" size="14.0" />
+                            </font>
+                        </Button>
+                    </HBox>
+
+                    <ScrollPane fitToWidth="true"
+                        style="-fx-background: transparent; -fx-background-color: transparent;">
+                        <VBox fx:id="auditoriumListContainer" spacing="15" style="-fx-padding: 10;" />
+                    </ScrollPane>
+                </VBox>
+            </Tab>
+
+            <!-- Tab Quản lý Vé -->
+            <Tab text="🎟️ Quản lý Vé">
+                <VBox spacing="20" style="-fx-padding: 30;">
+                    <HBox alignment="CENTER_LEFT" spacing="20">
+                        <Label text="Quản lý Vé và Bookings"
+                            style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button text="🔄 Refresh" onAction="#loadBookings"
+                            style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-background-radius: 8; -fx-cursor: hand;">
+                            <font>
+                                <Font name="System Bold" size="14.0" />
+                            </font>
+                        </Button>
+                    </HBox>
+
+                    <ScrollPane fitToWidth="true"
+                        style="-fx-background: transparent; -fx-background-color: transparent;">
+                        <VBox fx:id="bookingListContainer" spacing="15" style="-fx-padding: 10;" />
+                    </ScrollPane>
+                </VBox>
+            </Tab>
+
+            <!-- Tab Phê duyệt QR Payment -->
+            <Tab text="💳 Phê duyệt QR">
+                <VBox spacing="20" style="-fx-padding: 30;">
+                    <HBox alignment="CENTER_LEFT" spacing="20">
+                        <Label text="Yêu cầu Thanh toán QR"
+                            style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button text="🔄 Refresh" onAction="#loadPendingApprovals"
+                            style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-background-radius: 8; -fx-cursor: hand;">
+                            <font>
+                                <Font name="System Bold" size="14.0" />
+                            </font>
+                        </Button>
+                    </HBox>
+
+                    <ScrollPane fitToWidth="true"
+                        style="-fx-background: transparent; -fx-background-color: transparent;">
+                        <VBox fx:id="pendingApprovalsContainer" spacing="15"
+                            style="-fx-padding: 10;" />
+                    </ScrollPane>
+                </VBox>
+            </Tab>
+
+            <!-- Tab Thống kê -->
+            <Tab text="📊 Thống kê">
+                <VBox spacing="30" style="-fx-padding: 30;" alignment="CENTER">
+                    <Label text="Thống kê Hệ thống"
+                        style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+
+                    <!-- Stats Cards -->
+                    <HBox spacing="30" alignment="CENTER">
+                        <!-- Total Movies -->
+                        <VBox spacing="10" alignment="CENTER"
+                            style="-fx-background-color: white; -fx-padding: 30; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3); -fx-pref-width: 250;">
+                            <Label text="📽️" style="-fx-font-size: 40px;" />
+                            <Label fx:id="totalMoviesLabel" text="0"
+                                style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: #3498db;" />
+                            <Label text="Tổng Phim"
+                                style="-fx-font-size: 16px; -fx-text-fill: #7f8c8d;" />
+                        </VBox>
+
+                        <!-- Total Users -->
+                        <VBox spacing="10" alignment="CENTER"
+                            style="-fx-background-color: white; -fx-padding: 30; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3); -fx-pref-width: 250;">
+                            <Label text="👥" style="-fx-font-size: 40px;" />
+                            <Label fx:id="totalUsersLabel" text="0"
+                                style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: #27ae60;" />
+                            <Label text="Tổng Users"
+                                style="-fx-font-size: 16px; -fx-text-fill: #7f8c8d;" />
+                        </VBox>
+
+                        <!-- Total Bookings -->
+                        <VBox spacing="10" alignment="CENTER"
+                            style="-fx-background-color: white; -fx-padding: 30; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3); -fx-pref-width: 250;">
+                            <Label text="🎟️" style="-fx-font-size: 40px;" />
+                            <Label fx:id="totalBookingsLabel" text="0"
+                                style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: #e74c3c;" />
+                            <Label text="Tổng Bookings"
+                                style="-fx-font-size: 16px; -fx-text-fill: #7f8c8d;" />
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </Tab>
+        </TabPane>
+    </center>
+</BorderPane>

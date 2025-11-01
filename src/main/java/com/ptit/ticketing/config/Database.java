@@ -3,8 +3,10 @@ package com.ptit.ticketing.config;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Properties;
 
 /**
  * Class quản lý kết nối cơ sở dữ liệu PostgreSQL (có thể chạy OFFLINE).
@@ -16,15 +18,31 @@ public class Database {
 
     private Database() {
         try {
-            HikariConfig config = new HikariConfig();
-            config.setJdbcUrl("jdbc:postgresql://localhost:5432/ticketdb");
-            config.setUsername("postgres");
-            config.setPassword(""); // điền mật khẩu thật nếu có PostgreSQL
+            // Load config từ application.properties
+            Properties props = new Properties();
+            try (InputStream is = getClass().getResourceAsStream("/application.properties")) {
+                if (is == null) {
+                    throw new RuntimeException("application.properties not found");
+                }
+                props.load(is);
+            }
 
+            // Configure HikariCP
+            HikariConfig config = new HikariConfig();
+            config.setJdbcUrl(props.getProperty("db.url"));
+            config.setUsername(props.getProperty("db.user"));
+            config.setPassword(props.getProperty("db.password"));
+            config.setMaximumPoolSize(Integer.parseInt(props.getProperty("db.poolSize", "10")));
+
+            // Test connection
             ds = new HikariDataSource(config);
-            System.out.println("✅ Đã kết nối PostgreSQL thành công!");
+            try (Connection conn = ds.getConnection()) {
+                System.out.println("✅ Database connection successful!");
+                System.out.println("   Connected to: " + props.getProperty("db.url"));
+            }
         } catch (Exception e) {
-            System.out.println("⚠️ Không thể kết nối Database. Chạy chế độ OFFLINE để xem giao diện JavaFX.");
+            System.err.println("⚠️ Không thể kết nối Database. Chạy chế độ OFFLINE để xem giao diện JavaFX.");
+            System.err.println("   Error: " + e.getMessage());
             ds = null;
         }
     }

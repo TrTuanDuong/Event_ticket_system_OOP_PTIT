@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="com.ptit.ticketing.ui.ProfileSettingsController"
+    prefHeight="800.0" prefWidth="1200.0"
+    style="-fx-background-color: #f5f7fa;">
+
+    <!-- Top: Header with Back Button -->
+    <top>
+        <VBox spacing="0"
+            style="-fx-background-color: linear-gradient(to right, #667eea, #764ba2);">
+
+            <!-- Navigation Bar -->
+            <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 20;">
+                <Button text="← Back" onAction="#handleBack"
+                    style="-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-background-radius: 8; -fx-cursor: hand; -fx-font-weight: bold;" />
+
+                <Region HBox.hgrow="ALWAYS" />
+
+                <Label text="Profile Settings"
+                    style="-fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold;" />
+
+                <Region HBox.hgrow="ALWAYS" />
+
+                <Label fx:id="usernameLabel" text="Username"
+                    style="-fx-text-fill: white; -fx-font-size: 14px;" />
+
+                <!-- Logout Button -->
+                <Button text="Logout" onAction="#handleLogout"
+                    style="-fx-background-color: rgba(231, 76, 60, 0.9); -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-background-radius: 8; -fx-cursor: hand; -fx-font-weight: bold;" />
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- Center: Settings Form -->
+    <center>
+        <ScrollPane fitToWidth="true"
+            style="-fx-background: #f5f7fa; -fx-background-color: #f5f7fa;">
+            <VBox alignment="TOP_CENTER" spacing="30" style="-fx-padding: 50;">
+
+                <!-- Profile Card -->
+                <VBox spacing="25"
+                    style="-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 40; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 15, 0, 0, 3);"
+                    maxWidth="700">
+
+                    <Label text="👤 Account Information"
+                        style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+
+                    <!-- Success/Error Message -->
+                    <Label fx:id="messageLabel" wrapText="true" visible="false"
+                        style="-fx-padding: 10; -fx-background-radius: 5;" />
+
+                    <!-- Username (Read-only) -->
+                    <VBox spacing="8">
+                        <Label text="Username (cannot be changed)"
+                            style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #666666;" />
+                        <TextField fx:id="usernameField" editable="false"
+                            style="-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 8; -fx-background-color: #f0f0f0; -fx-border-color: #dddddd; -fx-border-radius: 8; -fx-border-width: 1;" />
+                    </VBox>
+
+                    <!-- Email -->
+                    <VBox spacing="8">
+                        <Label text="Email *"
+                            style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+                        <TextField fx:id="emailField"
+                            promptText="your.email@example.com"
+                            style="-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 8; -fx-border-color: #dddddd; -fx-border-radius: 8; -fx-border-width: 1;" />
+                    </VBox>
+
+                    <!-- Full Name -->
+                    <VBox spacing="8">
+                        <Label text="Full Name"
+                            style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+                        <TextField fx:id="fullNameField"
+                            promptText="Your full name"
+                            style="-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 8; -fx-border-color: #dddddd; -fx-border-radius: 8; -fx-border-width: 1;" />
+                    </VBox>
+
+                    <!-- Phone -->
+                    <VBox spacing="8">
+                        <Label text="Phone Number"
+                            style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+                        <TextField fx:id="phoneField"
+                            promptText="Your phone number"
+                            style="-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 8; -fx-border-color: #dddddd; -fx-border-radius: 8; -fx-border-width: 1;" />
+                    </VBox>
+
+                    <!-- Update Info Button -->
+                    <Button text="💾 Update Information" onAction="#handleUpdateInfo"
+                        style="-fx-background-color: linear-gradient(to right, #667eea, #764ba2); -fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold; -fx-padding: 14; -fx-background-radius: 8; -fx-cursor: hand;"
+                        prefWidth="300" />
+                </VBox>
+
+                <!-- Change Password Card -->
+                <VBox spacing="25"
+                    style="-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 40; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 15, 0, 0, 3);"
+                    maxWidth="700">
+
+                    <Label text="🔒 Change Password"
+                        style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+
+                    <!-- Current Password -->
+                    <VBox spacing="8">
+                        <Label text="Current Password *"
+                            style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+                        <PasswordField fx:id="currentPasswordField"
+                            promptText="Enter your current password"
+                            style="-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 8; -fx-border-color: #dddddd; -fx-border-radius: 8; -fx-border-width: 1;" />
+                    </VBox>
+
+                    <!-- New Password -->
+                    <VBox spacing="8">
+                        <Label text="New Password *"
+                            style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+                        <PasswordField fx:id="newPasswordField"
+                            promptText="At least 6 characters"
+                            style="-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 8; -fx-border-color: #dddddd; -fx-border-radius: 8; -fx-border-width: 1;" />
+                    </VBox>
+
+                    <!-- Confirm New Password -->
+                    <VBox spacing="8">
+                        <Label text="Confirm New Password *"
+                            style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+                        <PasswordField fx:id="confirmPasswordField"
+                            promptText="Re-enter new password"
+                            style="-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 8; -fx-border-color: #dddddd; -fx-border-radius: 8; -fx-border-width: 1;" />
+                    </VBox>
+
+                    <!-- Change Password Button -->
+                    <Button text="🔐 Change Password" onAction="#handleChangePassword"
+                        style="-fx-background-color: linear-gradient(to right, #f39c12, #e67e22); -fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold; -fx-padding: 14; -fx-background-radius: 8; -fx-cursor: hand;"
+                        prefWidth="300" />
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>
