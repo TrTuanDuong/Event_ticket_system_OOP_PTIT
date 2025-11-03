@@ -50,6 +50,14 @@ public class AdminPanelController {
     // Showtime Management
     @FXML
     private VBox showtimeListContainer;
+    @FXML
+    private Button filterAllBtn;
+    @FXML
+    private Button filterUpcomingBtn;
+    @FXML
+    private Button filterOngoingBtn;
+    @FXML
+    private Button filterCompletedBtn;
 
     // Auditorium Management
     @FXML
@@ -74,9 +82,11 @@ public class AdminPanelController {
     private MovieService movieService;
     private com.ptit.ticketing.service.BookingService bookingService;
     private com.ptit.ticketing.service.ShowtimeService showtimeService;
+    private com.ptit.ticketing.service.ReportService reportService;
     private List<Movie> allMovies;
     private List<User> allUsers;
     private List<Genre> allGenres;
+    private String currentShowtimeFilter = "all"; // all, upcoming, ongoing, completed
 
     @FXML
     public void initialize() {
@@ -84,6 +94,8 @@ public class AdminPanelController {
         bookingService = new com.ptit.ticketing.service.BookingService(
                 com.ptit.ticketing.config.Database.get().ds());
         showtimeService = new com.ptit.ticketing.service.ShowtimeService(
+                com.ptit.ticketing.config.Database.get().ds());
+        reportService = new com.ptit.ticketing.service.ReportService(
                 com.ptit.ticketing.config.Database.get().ds());
 
         User currentUser = SessionManager.getCurrentUser();
@@ -925,16 +937,49 @@ public class AdminPanelController {
         showtimeListContainer.getChildren().clear();
 
         try {
-            List<com.ptit.ticketing.domain.Showtime> showtimes = showtimeService.getUpcomingShowtimes();
+            // Admin cần thấy TẤT CẢ showtimes (upcoming + ongoing + completed)
+            List<com.ptit.ticketing.domain.Showtime> showtimes = showtimeService.getAllShowtimes();
 
-            if (showtimes.isEmpty()) {
-                Label emptyLabel = new Label("📭 Chưa có suất chiếu nào");
+            // Apply filter - SỬ DỤNG TIMEZONE +07:00
+            java.time.OffsetDateTime now = java.time.OffsetDateTime.now(java.time.ZoneId.of("Asia/Ho_Chi_Minh"));
+            
+            List<com.ptit.ticketing.domain.Showtime> filteredShowtimes = showtimes;
+
+            switch (currentShowtimeFilter) {
+                case "upcoming":
+                    // Sắp chiếu: Gần thời gian hiện tại nhất lên đầu (sort ASC)
+                    filteredShowtimes = showtimes.stream()
+                            .filter(st -> now.isBefore(st.getStartTime()))
+                            .sorted((a, b) -> a.getStartTime().compareTo(b.getStartTime()))
+                            .toList();
+                    break;
+                case "ongoing":
+                    filteredShowtimes = showtimes.stream()
+                            .filter(st -> now.isAfter(st.getStartTime()) && now.isBefore(st.getEndTime()))
+                            .toList();
+                    break;
+                case "completed":
+                    filteredShowtimes = showtimes.stream()
+                            .filter(st -> now.isAfter(st.getEndTime()))
+                            .toList();
+                    break;
+                // "all" - không filter
+            }
+
+            if (filteredShowtimes.isEmpty()) {
+                String message = switch (currentShowtimeFilter) {
+                    case "upcoming" -> "📭 Không có suất chiếu sắp chiếu";
+                    case "ongoing" -> "📭 Không có suất chiếu đang chiếu";
+                    case "completed" -> "📭 Không có suất chiếu đã kết thúc";
+                    default -> "📭 Chưa có suất chiếu nào";
+                };
+                Label emptyLabel = new Label(message);
                 emptyLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #7f8c8d; -fx-padding: 50;");
                 showtimeListContainer.getChildren().add(emptyLabel);
                 return;
             }
 
-            for (com.ptit.ticketing.domain.Showtime showtime : showtimes) {
+            for (com.ptit.ticketing.domain.Showtime showtime : filteredShowtimes) {
                 HBox showtimeCard = createShowtimeCard(showtime);
                 showtimeListContainer.getChildren().add(showtimeCard);
             }
@@ -943,6 +988,44 @@ public class AdminPanelController {
             e.printStackTrace();
             showAlert("Error", "Không thể tải danh sách suất chiếu: " + e.getMessage());
         }
+    }
+
+    @FXML
+    private void handleFilterAll() {
+        setActiveFilter(filterAllBtn, "all");
+    }
+
+    @FXML
+    private void handleFilterUpcoming() {
+        setActiveFilter(filterUpcomingBtn, "upcoming");
+    }
+
+    @FXML
+    private void handleFilterOngoing() {
+        setActiveFilter(filterOngoingBtn, "ongoing");
+    }
+
+    @FXML
+    private void handleFilterCompleted() {
+        setActiveFilter(filterCompletedBtn, "completed");
+    }
+
+    private void setActiveFilter(Button activeButton, String filter) {
+        // Reset all buttons to inactive style
+        String inactiveStyle = "-fx-background-color: #ecf0f1; -fx-text-fill: #34495e; -fx-font-size: 13px; -fx-padding: 8 15; -fx-background-radius: 5; -fx-cursor: hand;";
+        String activeStyle = "-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-size: 13px; -fx-padding: 8 15; -fx-background-radius: 5; -fx-cursor: hand;";
+
+        filterAllBtn.setStyle(inactiveStyle);
+        filterUpcomingBtn.setStyle(inactiveStyle);
+        filterOngoingBtn.setStyle(inactiveStyle);
+        filterCompletedBtn.setStyle(inactiveStyle);
+
+        // Set active button
+        activeButton.setStyle(activeStyle);
+
+        // Update filter and reload
+        currentShowtimeFilter = filter;
+        loadShowtimes();
     }
 
     private HBox createShowtimeCard(com.ptit.ticketing.domain.Showtime showtime) {
@@ -958,19 +1041,72 @@ public class AdminPanelController {
         iconLabel.setStyle("-fx-font-size: 32px;");
 
         VBox infoBox = new VBox(5);
+
+        // Movie title với status badge
+        HBox titleBox = new HBox(10);
+        titleBox.setAlignment(Pos.CENTER_LEFT);
+
         Label movieLabel = new Label(showtime.getMovieTitle());
         movieLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
+        titleBox.getChildren().add(movieLabel);
+
+        // Xác định trạng thái dựa trên thời gian - SỬ DỤNG TIMEZONE +07:00
+        java.time.OffsetDateTime now = java.time.OffsetDateTime.now(java.time.ZoneId.of("Asia/Ho_Chi_Minh"));
+        String statusText = "";
+        String statusColor = "";
+        String statusIcon = "";
+
+        if (now.isBefore(showtime.getStartTime())) {
+            // Chưa chiếu
+            statusText = "SẮP CHIẾU";
+            statusColor = "#3498db"; // Xanh dương
+            statusIcon = "⏰";
+        } else if (now.isAfter(showtime.getStartTime()) && now.isBefore(showtime.getEndTime())) {
+            // Đang chiếu
+            statusText = "ĐANG CHIẾU";
+            statusColor = "#27ae60"; // Xanh lá
+            statusIcon = "▶️";
+        } else {
+            // Đã kết thúc
+            statusText = "ĐÃ KẾT THÚC";
+            statusColor = "#95a5a6"; // Xám
+            statusIcon = "✅";
+        }
+
+        Label statusBadge = new Label(statusIcon + " " + statusText);
+        statusBadge.setStyle(
+                "-fx-background-color: " + statusColor + "; " +
+                        "-fx-text-fill: white; " +
+                        "-fx-font-size: 11px; " +
+                        "-fx-font-weight: bold; " +
+                        "-fx-padding: 4 8; " +
+                        "-fx-background-radius: 4;");
+        titleBox.getChildren().add(statusBadge);
 
         Label auditoriumLabel = new Label("🏛️ Phòng: " + showtime.getAuditoriumName());
         auditoriumLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #7f8c8d;");
 
-        Label timeLabel = new Label("🕐 " + showtime.getStartTime());
+        // Format time properly với timezone +07:00
+        java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        String formattedStartTime = showtime.getStartTime().format(formatter);
+        String formattedEndTime = showtime.getEndTime().format(formatter);
+        Label timeLabel = new Label("🕐 " + formattedStartTime + " - " + formattedEndTime);
         timeLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #3498db;");
 
-        infoBox.getChildren().addAll(movieLabel, auditoriumLabel, timeLabel);
+        infoBox.getChildren().addAll(titleBox, auditoriumLabel, timeLabel);
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        Button editBtn = new Button("✏️ Sửa");
+        editBtn.setStyle(
+                "-fx-background-color: #f39c12; " +
+                        "-fx-text-fill: white; " +
+                        "-fx-font-size: 14px; " +
+                        "-fx-padding: 10 20; " +
+                        "-fx-background-radius: 8; " +
+                        "-fx-cursor: hand;");
+        editBtn.setOnAction(e -> handleEditShowtime(showtime));
 
         Button deleteBtn = new Button("🗑️ Xóa");
         deleteBtn.setStyle(
@@ -982,8 +1118,63 @@ public class AdminPanelController {
                         "-fx-cursor: hand;");
         deleteBtn.setOnAction(e -> handleDeleteShowtime(showtime));
 
-        card.getChildren().addAll(iconLabel, infoBox, spacer, deleteBtn);
+        card.getChildren().addAll(iconLabel, infoBox, spacer, editBtn, deleteBtn);
         return card;
+    }
+
+    /**
+     * Kiểm tra xem có conflict với suất chiếu khác trong cùng phòng không
+     * 
+     * @param auditoriumId      ID phòng chiếu
+     * @param startTime         Thời gian bắt đầu
+     * @param endTime           Thời gian kết thúc
+     * @param excludeShowtimeId ID suất chiếu cần loại trừ (dùng khi edit, null khi
+     *                          add)
+     * @return true nếu có conflict, false nếu không
+     */
+    private boolean hasShowtimeConflict(UUID auditoriumId, java.time.OffsetDateTime startTime,
+            java.time.OffsetDateTime endTime, UUID excludeShowtimeId) {
+        try (Connection conn = com.ptit.ticketing.config.Database.get().getConnection()) {
+            // CHỈ check conflict với các suất chiếu CHƯA KẾT THÚC (end_time >= NOW)
+            String sql = "SELECT id, start_time, end_time FROM api_showtime " +
+                    "WHERE auditorium_id = ? " +
+                    "AND status != 'canceled' " +
+                    "AND end_time >= NOW()"; // ← CHỈ check suất chiếu chưa kết thúc
+
+            if (excludeShowtimeId != null) {
+                sql += " AND id != ?";
+            }
+
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setObject(1, auditoriumId);
+            if (excludeShowtimeId != null) {
+                ps.setObject(2, excludeShowtimeId);
+            }
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                java.time.OffsetDateTime existingStart = rs.getObject("start_time", java.time.OffsetDateTime.class);
+                java.time.OffsetDateTime existingEnd = rs.getObject("end_time", java.time.OffsetDateTime.class);
+
+                // Kiểm tra overlap:
+                // Có conflict nếu:
+                // 1. Start time mới nằm giữa suất chiếu đang có
+                // 2. End time mới nằm giữa suất chiếu đang có
+                // 3. Suất chiếu mới bao phủ suất chiếu đang có
+                boolean overlap = (startTime.isBefore(existingEnd) && endTime.isAfter(existingStart));
+
+                if (overlap) {
+                    return true;
+                }
+            }
+
+            return false;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return true; // Nếu có lỗi, coi như có conflict để an toàn
+        }
     }
 
     @FXML
@@ -1002,9 +1193,25 @@ public class AdminPanelController {
 
         ComboBox<com.ptit.ticketing.domain.Movie> movieCombo = new ComboBox<>();
         ComboBox<com.ptit.ticketing.domain.Auditorium> auditoriumCombo = new ComboBox<>();
-        TextField startTimeField = new TextField();
-        TextField endTimeField = new TextField();
-        TextField basePriceField = new TextField();
+
+        // Date & Time Pickers thay vì TextField
+        DatePicker datePicker = new DatePicker();
+        datePicker.setValue(java.time.LocalDate.now());
+
+        Spinner<Integer> startHourSpinner = new Spinner<>(0, 23, 19);
+        Spinner<Integer> startMinuteSpinner = new Spinner<>(0, 59, 0);
+        startHourSpinner.setEditable(true);
+        startMinuteSpinner.setEditable(true);
+        startHourSpinner.setPrefWidth(70);
+        startMinuteSpinner.setPrefWidth(70);
+
+        HBox startTimeBox = new HBox(5);
+        startTimeBox.getChildren().addAll(
+                new Label("Giờ:"), startHourSpinner,
+                new Label("Phút:"), startMinuteSpinner);
+
+        TextField basePriceField = new TextField("50000");
+        basePriceField.setPromptText("50000");
 
         // Load movies và auditoriums
         try {
@@ -1035,22 +1242,19 @@ public class AdminPanelController {
                     return null;
                 }
             });
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        startTimeField.setPromptText("2024-12-25T19:00:00+07:00");
-        endTimeField.setPromptText("2024-12-25T21:30:00+07:00");
-        basePriceField.setPromptText("50000");
-
         grid.add(new Label("Phim:"), 0, 0);
         grid.add(movieCombo, 1, 0);
-        grid.add(new Label("Phòng:"), 0, 1);
-        grid.add(auditoriumCombo, 1, 1);
+        grid.add(new Label("Ngày chiếu:"), 0, 1);
+        grid.add(datePicker, 1, 1);
         grid.add(new Label("Giờ bắt đầu:"), 0, 2);
-        grid.add(startTimeField, 1, 2);
-        grid.add(new Label("Giờ kết thúc:"), 0, 3);
-        grid.add(endTimeField, 1, 3);
+        grid.add(startTimeBox, 1, 2);
+        grid.add(new Label("Phòng:"), 0, 3);
+        grid.add(auditoriumCombo, 1, 3);
         grid.add(new Label("Giá cơ bản:"), 0, 4);
         grid.add(basePriceField, 1, 4);
 
@@ -1059,11 +1263,45 @@ public class AdminPanelController {
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == addButtonType) {
                 try {
+                    // Validate inputs
+                    if (movieCombo.getValue() == null || auditoriumCombo.getValue() == null) {
+                        showAlert("Error", "Vui lòng chọn phim và phòng chiếu!");
+                        return null;
+                    }
+
+                    // Lấy duration TỪ PHIM (không cần nhập thủ công)
+                    com.ptit.ticketing.domain.Movie selectedMovie = movieCombo.getValue();
+                    int duration = selectedMovie.getDurationMin();
+
+                    // Tạo start time và end time
+                    java.time.LocalDate date = datePicker.getValue();
+                    int startHour = startHourSpinner.getValue();
+                    int startMinute = startMinuteSpinner.getValue();
+
+                    java.time.LocalDateTime startDateTime = java.time.LocalDateTime.of(
+                            date.getYear(), date.getMonth(), date.getDayOfMonth(),
+                            startHour, startMinute);
+
+                    java.time.OffsetDateTime startTime = java.time.OffsetDateTime.of(
+                            startDateTime, java.time.ZoneOffset.of("+07:00"));
+
+                    // End time = Start time + Duration phim
+                    java.time.OffsetDateTime endTime = startTime.plusMinutes(duration);
+
+                    // Kiểm tra conflict với các suất chiếu khác trong cùng phòng
+                    UUID auditoriumId = auditoriumCombo.getValue().getId();
+                    if (hasShowtimeConflict(auditoriumId, startTime, endTime, null)) {
+                        showAlert("Xung đột lịch chiếu",
+                                "⚠️ Phòng chiếu này đã có suất chiếu khác trong khoảng thời gian này!\n\n" +
+                                        "Vui lòng chọn phòng khác hoặc thời gian khác.");
+                        return null;
+                    }
+
                     com.ptit.ticketing.domain.Showtime showtime = new com.ptit.ticketing.domain.Showtime();
-                    showtime.setMovieId(movieCombo.getValue().getId());
-                    showtime.setAuditoriumId(auditoriumCombo.getValue().getId());
-                    showtime.setStartTime(java.time.OffsetDateTime.parse(startTimeField.getText()));
-                    showtime.setEndTime(java.time.OffsetDateTime.parse(endTimeField.getText()));
+                    showtime.setMovieId(selectedMovie.getId());
+                    showtime.setAuditoriumId(auditoriumId);
+                    showtime.setStartTime(startTime);
+                    showtime.setEndTime(endTime);
                     showtime.setBasePrice(new java.math.BigDecimal(basePriceField.getText()));
                     showtime.setStatus("scheduled");
                     return showtime;
@@ -1109,6 +1347,175 @@ public class AdminPanelController {
                     e.printStackTrace();
                     showAlert("Error", "Không thể xóa suất chiếu: " + e.getMessage());
                 }
+            }
+        });
+    }
+
+    private void handleEditShowtime(com.ptit.ticketing.domain.Showtime showtime) {
+        Dialog<com.ptit.ticketing.domain.Showtime> dialog = new Dialog<>();
+        dialog.setTitle("Sửa Suất chiếu");
+        dialog.setHeaderText("Chỉnh sửa thông tin suất chiếu");
+
+        ButtonType saveButtonType = new ButtonType("Lưu", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        ComboBox<com.ptit.ticketing.domain.Movie> movieCombo = new ComboBox<>();
+        ComboBox<com.ptit.ticketing.domain.Auditorium> auditoriumCombo = new ComboBox<>();
+
+        // Date & Time Pickers
+        DatePicker datePicker = new DatePicker();
+        datePicker.setValue(showtime.getStartTime().toLocalDate());
+
+        Spinner<Integer> startHourSpinner = new Spinner<>(0, 23, showtime.getStartTime().getHour());
+        Spinner<Integer> startMinuteSpinner = new Spinner<>(0, 59, showtime.getStartTime().getMinute());
+        startHourSpinner.setEditable(true);
+        startMinuteSpinner.setEditable(true);
+        startHourSpinner.setPrefWidth(70);
+        startMinuteSpinner.setPrefWidth(70);
+
+        HBox startTimeBox = new HBox(5);
+        startTimeBox.getChildren().addAll(
+                new Label("Giờ:"), startHourSpinner,
+                new Label("Phút:"), startMinuteSpinner);
+
+        TextField basePriceField = new TextField();
+        basePriceField.setText(showtime.getBasePrice().toString());
+
+        ComboBox<String> statusCombo = new ComboBox<>();
+        statusCombo.getItems().addAll("scheduled", "ongoing", "completed", "canceled");
+        statusCombo.setValue(showtime.getStatus());
+
+        // Load movies và auditoriums
+        try {
+            List<com.ptit.ticketing.domain.Movie> movies = showtimeService.getAllMovies();
+            movieCombo.getItems().addAll(movies);
+            movieCombo.setConverter(new javafx.util.StringConverter<com.ptit.ticketing.domain.Movie>() {
+                @Override
+                public String toString(com.ptit.ticketing.domain.Movie movie) {
+                    return movie != null ? movie.getTitle() : "";
+                }
+
+                @Override
+                public com.ptit.ticketing.domain.Movie fromString(String string) {
+                    return null;
+                }
+            });
+
+            List<com.ptit.ticketing.domain.Auditorium> auditoriums = showtimeService.getAllAuditoriums();
+            auditoriumCombo.getItems().addAll(auditoriums);
+            auditoriumCombo.setConverter(new javafx.util.StringConverter<com.ptit.ticketing.domain.Auditorium>() {
+                @Override
+                public String toString(com.ptit.ticketing.domain.Auditorium aud) {
+                    return aud != null ? aud.getName() : "";
+                }
+
+                @Override
+                public com.ptit.ticketing.domain.Auditorium fromString(String string) {
+                    return null;
+                }
+            });
+
+            // Pre-fill with existing showtime data
+            for (com.ptit.ticketing.domain.Movie movie : movies) {
+                if (movie.getId().equals(showtime.getMovieId())) {
+                    movieCombo.setValue(movie);
+                    break;
+                }
+            }
+
+            for (com.ptit.ticketing.domain.Auditorium aud : auditoriums) {
+                if (aud.getId().equals(showtime.getAuditoriumId())) {
+                    auditoriumCombo.setValue(aud);
+                    break;
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        grid.add(new Label("Phim:"), 0, 0);
+        grid.add(movieCombo, 1, 0);
+        grid.add(new Label("Ngày chiếu:"), 0, 1);
+        grid.add(datePicker, 1, 1);
+        grid.add(new Label("Giờ bắt đầu:"), 0, 2);
+        grid.add(startTimeBox, 1, 2);
+        grid.add(new Label("Phòng:"), 0, 3);
+        grid.add(auditoriumCombo, 1, 3);
+        grid.add(new Label("Giá cơ bản:"), 0, 4);
+        grid.add(basePriceField, 1, 4);
+        grid.add(new Label("Trạng thái:"), 0, 5);
+        grid.add(statusCombo, 1, 5);
+
+        dialog.getDialogPane().setContent(grid);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == saveButtonType) {
+                try {
+                    // Validate
+                    if (movieCombo.getValue() == null || auditoriumCombo.getValue() == null) {
+                        showAlert("Error", "Vui lòng chọn phim và phòng chiếu!");
+                        return null;
+                    }
+
+                    // Lấy duration TỪ PHIM (không cần nhập thủ công)
+                    com.ptit.ticketing.domain.Movie selectedMovie = movieCombo.getValue();
+                    int duration = selectedMovie.getDurationMin();
+
+                    // Tạo start time và end time mới
+                    java.time.LocalDate date = datePicker.getValue();
+                    int startHour = startHourSpinner.getValue();
+                    int startMinute = startMinuteSpinner.getValue();
+
+                    java.time.LocalDateTime startDateTime = java.time.LocalDateTime.of(
+                            date.getYear(), date.getMonth(), date.getDayOfMonth(),
+                            startHour, startMinute);
+
+                    java.time.OffsetDateTime newStartTime = java.time.OffsetDateTime.of(
+                            startDateTime, java.time.ZoneOffset.of("+07:00"));
+
+                    // End time = Start time + Duration phim
+                    java.time.OffsetDateTime newEndTime = newStartTime.plusMinutes(duration);
+
+                    // Kiểm tra conflict (loại trừ chính nó khi check)
+                    UUID auditoriumId = auditoriumCombo.getValue().getId();
+                    if (hasShowtimeConflict(auditoriumId, newStartTime, newEndTime, showtime.getId())) {
+                        showAlert("Xung đột lịch chiếu",
+                                "⚠️ Phòng chiếu này đã có suất chiếu khác trong khoảng thời gian này!\n\n" +
+                                        "Vui lòng chọn phòng khác hoặc thời gian khác.");
+                        return null;
+                    }
+
+                    showtime.setMovieId(selectedMovie.getId());
+                    showtime.setAuditoriumId(auditoriumId);
+                    showtime.setStartTime(newStartTime);
+                    showtime.setEndTime(newEndTime);
+                    showtime.setBasePrice(new java.math.BigDecimal(basePriceField.getText()));
+                    showtime.setStatus(statusCombo.getValue());
+                    return showtime;
+                } catch (Exception e) {
+                    showAlert("Error", "Dữ liệu không hợp lệ: " + e.getMessage());
+                    return null;
+                }
+            }
+            return null;
+        });
+
+        Optional<com.ptit.ticketing.domain.Showtime> result = dialog.showAndWait();
+        result.ifPresent(updatedShowtime -> {
+            try {
+                showtimeService.updateShowtime(updatedShowtime);
+                showAlert("Success", "✅ Đã cập nhật suất chiếu!");
+                loadShowtimes();
+                loadStatistics();
+            } catch (Exception e) {
+                e.printStackTrace();
+                showAlert("Error", "Không thể cập nhật suất chiếu: " + e.getMessage());
             }
         });
     }
@@ -1780,5 +2187,205 @@ public class AdminPanelController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    // ==================== REVENUE REPORT & EXPORT ====================
+
+    @FXML
+    private void handleViewRevenue() {
+        // Dialog xem thống kê
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("Thống kê doanh thu");
+        dialog.setHeaderText(null);
+
+        ButtonType closeButtonType = new ButtonType("Đóng", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(closeButtonType);
+
+        VBox content = new VBox(15);
+        content.setPadding(new Insets(20));
+
+        // Date pickers
+        HBox dateBox = new HBox(10);
+        dateBox.setAlignment(Pos.CENTER_LEFT);
+        DatePicker fromDatePicker = new DatePicker();
+        fromDatePicker.setValue(java.time.LocalDate.now().minusMonths(1));
+        DatePicker toDatePicker = new DatePicker();
+        toDatePicker.setValue(java.time.LocalDate.now());
+        
+        Button refreshButton = new Button("🔄 Làm mới");
+        Button exportButton = new Button("📥 Xuất Excel");
+        exportButton.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold;");
+        
+        dateBox.getChildren().addAll(
+            new Label("Từ:"), fromDatePicker,
+            new Label("Đến:"), toDatePicker,
+            refreshButton,
+            exportButton
+        );
+
+        // Revenue display area
+        VBox statsBox = new VBox(10);
+        statsBox.setPadding(new Insets(10));
+        statsBox.setStyle("-fx-background-color: #ecf0f1; -fx-background-radius: 5;");
+
+        content.getChildren().addAll(dateBox, statsBox);
+
+        // Load initial stats
+        refreshButton.setOnAction(e -> {
+            try {
+                java.time.LocalDate fromDate = fromDatePicker.getValue();
+                java.time.LocalDate toDate = toDatePicker.getValue();
+                
+                loadRevenueStats(statsBox, fromDate, toDate);
+            } catch (Exception ex) {
+                showError("Lỗi", "Không thể tải thống kê: " + ex.getMessage());
+            }
+        });
+        
+        // Export button handler
+        exportButton.setOnAction(e -> {
+            try {
+                java.time.LocalDate fromDate = fromDatePicker.getValue();
+                java.time.LocalDate toDate = toDatePicker.getValue();
+                
+                // Chọn nơi lưu file
+                javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+                fileChooser.setTitle("Lưu báo cáo Excel");
+                fileChooser.setInitialFileName("BaoCaoDoanhThu_" + 
+                    java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd")) + 
+                    ".xlsx");
+                fileChooser.getExtensionFilters().add(
+                    new javafx.stage.FileChooser.ExtensionFilter("Excel Files", "*.xlsx")
+                );
+
+                Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+                java.io.File file = fileChooser.showSaveDialog(stage);
+
+                if (file != null) {
+                    // Export to Excel
+                    reportService.exportRevenueToExcel(fromDate, toDate, file.getAbsolutePath());
+                    showSuccess("Thành công", 
+                        "✅ Đã xuất báo cáo doanh thu!\n\n" +
+                        "Từ ngày: " + fromDate.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n" +
+                        "Đến ngày: " + toDate.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n\n" +
+                        "File: " + file.getAbsolutePath());
+                }
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                showError("Lỗi", "Không thể xuất báo cáo: " + ex.getMessage());
+            }
+        });
+
+        // Auto-load first time
+        loadRevenueStats(statsBox, fromDatePicker.getValue(), toDatePicker.getValue());
+
+        ScrollPane scrollPane = new ScrollPane(content);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setPrefHeight(500);
+
+        dialog.getDialogPane().setContent(scrollPane);
+        dialog.getDialogPane().setPrefWidth(700);
+        dialog.showAndWait();
+    }
+
+    private void loadRevenueStats(VBox container, java.time.LocalDate fromDate, java.time.LocalDate toDate) {
+        container.getChildren().clear();
+
+        try {
+            // Summary
+            Label titleLabel = new Label("📊 TỔNG QUAN DOANH THU");
+            titleLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+            container.getChildren().add(titleLabel);
+
+            // Get summary data
+            java.util.List<com.ptit.ticketing.service.ReportService.DailyRevenue> dailyRevenues = 
+                reportService.getDailyRevenue(fromDate, toDate);
+            
+            java.math.BigDecimal totalRevenue = dailyRevenues.stream()
+                .map(com.ptit.ticketing.service.ReportService.DailyRevenue::getTotalRevenue)
+                .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
+            
+            int totalBookings = dailyRevenues.stream()
+                .mapToInt(com.ptit.ticketing.service.ReportService.DailyRevenue::getTotalBookings)
+                .sum();
+            
+            int totalTickets = dailyRevenues.stream()
+                .mapToInt(com.ptit.ticketing.service.ReportService.DailyRevenue::getTotalTickets)
+                .sum();
+
+            VBox summaryBox = new VBox(8);
+            summaryBox.setPadding(new Insets(10));
+            summaryBox.setStyle("-fx-background-color: white; -fx-background-radius: 5; -fx-border-color: #bdc3c7; -fx-border-radius: 5;");
+            
+            summaryBox.getChildren().addAll(
+                createStatRow("💰 Tổng doanh thu:", String.format("%,d VNĐ", totalRevenue.longValue())),
+                createStatRow("🎫 Tổng số vé:", String.valueOf(totalTickets)),
+                createStatRow("📦 Tổng booking:", String.valueOf(totalBookings))
+            );
+            
+            container.getChildren().add(summaryBox);
+
+            // Movie revenue
+            Label movieTitleLabel = new Label("🎬 DOANH THU THEO PHIM");
+            movieTitleLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 10 0 5 0;");
+            container.getChildren().add(movieTitleLabel);
+
+            java.util.List<com.ptit.ticketing.service.ReportService.MovieRevenue> movieRevenues = 
+                reportService.getMovieRevenue(fromDate, toDate);
+
+            if (movieRevenues.isEmpty()) {
+                Label emptyLabel = new Label("Không có dữ liệu");
+                emptyLabel.setStyle("-fx-text-fill: #7f8c8d;");
+                container.getChildren().add(emptyLabel);
+            } else {
+                for (com.ptit.ticketing.service.ReportService.MovieRevenue mr : movieRevenues) {
+                    HBox movieBox = new HBox(10);
+                    movieBox.setPadding(new Insets(10));
+                    movieBox.setStyle("-fx-background-color: white; -fx-background-radius: 5; -fx-border-color: #bdc3c7; -fx-border-radius: 5;");
+                    movieBox.setAlignment(Pos.CENTER_LEFT);
+
+                    VBox infoBox = new VBox(5);
+                    Label nameLabel = new Label(mr.getMovieTitle());
+                    nameLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
+                    
+                    Label detailLabel = new Label(String.format("%d suất chiếu • %d vé bán", 
+                        mr.getTotalShowtimes(), mr.getTotalTickets()));
+                    detailLabel.setStyle("-fx-text-fill: #7f8c8d; -fx-font-size: 12px;");
+                    
+                    infoBox.getChildren().addAll(nameLabel, detailLabel);
+
+                    Region spacer = new Region();
+                    HBox.setHgrow(spacer, Priority.ALWAYS);
+
+                    Label revenueLabel = new Label(String.format("%,d VNĐ", mr.getTotalRevenue().longValue()));
+                    revenueLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #27ae60;");
+
+                    movieBox.getChildren().addAll(infoBox, spacer, revenueLabel);
+                    container.getChildren().add(movieBox);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Label errorLabel = new Label("❌ Lỗi khi tải dữ liệu: " + e.getMessage());
+            errorLabel.setStyle("-fx-text-fill: #e74c3c;");
+            container.getChildren().add(errorLabel);
+        }
+    }
+
+    private HBox createStatRow(String label, String value) {
+        HBox row = new HBox(10);
+        row.setAlignment(Pos.CENTER_LEFT);
+        
+        Label labelText = new Label(label);
+        labelText.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
+        labelText.setPrefWidth(200);
+        
+        Label valueText = new Label(value);
+        valueText.setStyle("-fx-font-size: 14px; -fx-text-fill: #27ae60;");
+        
+        row.getChildren().addAll(labelText, valueText);
+        return row;
     }
 }

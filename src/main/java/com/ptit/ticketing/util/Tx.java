@@ -25,4 +25,16 @@ public class Tx {
       throw new RuntimeException("Connection failed", e);
     }
   }
+
+  /**
+   * Execute read-only query (no transaction needed)
+   */
+  public static <T> T inReadOnly(DataSource ds, SqlFunction<Connection, T> fn) {
+    try (Connection c = ds.getConnection()) {
+      c.setReadOnly(true);
+      return fn.apply(c);
+    } catch (Exception e) {
+      throw new RuntimeException("Read-only query failed", e);
+    }
+  }
 }

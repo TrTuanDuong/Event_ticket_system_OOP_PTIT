@@ -235,8 +235,13 @@ public class SeatMapController {
         }
 
         if (showtimeInfoLabel != null) {
+            // Format time properly
+            java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter
+                    .ofPattern("dd/MM/yyyy HH:mm");
+            String formattedTime = currentShowtime.getStartTime().format(formatter);
+
             String info = String.format("%s | %s | %.0f VND",
-                    currentShowtime.getStartTime().toString(),
+                    formattedTime,
                     currentShowtime.getAuditoriumName(),
                     currentShowtime.getBasePrice());
             showtimeInfoLabel.setText(info);

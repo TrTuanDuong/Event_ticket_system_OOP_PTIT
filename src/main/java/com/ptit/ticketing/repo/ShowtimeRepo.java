@@ -23,7 +23,7 @@ public class ShowtimeRepo extends BaseRepo {
         String sql = """
                 SELECT s.id, s.movie_id, s.auditorium_id, s.start_time, s.end_time,
                     s.base_price, s.status,
-                    m.title as movie_title,
+                    m.title as movie_title, m.duration_min,
                     a.name as auditorium_name
                 FROM api_showtime s
                 JOIN api_movie m ON s.movie_id = m.id
@@ -43,13 +43,38 @@ public class ShowtimeRepo extends BaseRepo {
     }
 
     /**
+     * Find ALL showtimes (for Admin Panel) - không filter theo thời gian
+     */
+    public List<Showtime> findAll(Connection c) throws SQLException {
+        String sql = """
+                SELECT s.id, s.movie_id, s.auditorium_id, s.start_time, s.end_time,
+                    s.base_price, s.status,
+                    m.title as movie_title, m.duration_min,
+                    a.name as auditorium_name
+                FROM api_showtime s
+                JOIN api_movie m ON s.movie_id = m.id
+                JOIN api_auditorium a ON s.auditorium_id = a.id
+                WHERE s.status != 'canceled'
+                ORDER BY s.start_time DESC
+                """;
+        try (PreparedStatement st = c.prepareStatement(sql);
+                ResultSet rs = st.executeQuery()) {
+            List<Showtime> showtimes = new ArrayList<>();
+            while (rs.next()) {
+                showtimes.add(mapRow(rs));
+            }
+            return showtimes;
+        }
+    }
+
+    /**
      * Find showtimes by movie ID
      */
     public List<Showtime> findByMovieId(Connection c, UUID movieId) throws SQLException {
         String sql = """
                 SELECT s.id, s.movie_id, s.auditorium_id, s.start_time, s.end_time,
                     s.base_price, s.status,
-                    m.title as movie_title,
+                    m.title as movie_title, m.duration_min,
                     a.name as auditorium_name
                 FROM api_showtime s
                 JOIN api_movie m ON s.movie_id = m.id
@@ -76,7 +101,7 @@ public class ShowtimeRepo extends BaseRepo {
         String sql = """
                 SELECT s.id, s.movie_id, s.auditorium_id, s.start_time, s.end_time,
                     s.base_price, s.status,
-                    m.title as movie_title,
+                    m.title as movie_title, m.duration_min,
                     a.name as auditorium_name
                 FROM api_showtime s
                 JOIN api_movie m ON s.movie_id = m.id
@@ -149,8 +174,19 @@ public class ShowtimeRepo extends BaseRepo {
         s.setId((UUID) rs.getObject("id"));
         s.setMovieId((UUID) rs.getObject("movie_id"));
         s.setAuditoriumId((UUID) rs.getObject("auditorium_id"));
-        s.setStartTime(rs.getObject("start_time", OffsetDateTime.class));
-        s.setEndTime(rs.getObject("end_time", OffsetDateTime.class));
+        
+        // FIX TIMEZONE: Convert từ UTC sang Asia/Ho_Chi_Minh (+07:00)
+        OffsetDateTime startTime = rs.getTimestamp("start_time")
+            .toInstant()
+            .atZone(java.time.ZoneId.of("Asia/Ho_Chi_Minh"))
+            .toOffsetDateTime();
+        s.setStartTime(startTime);
+        
+        // AUTO-CALCULATE end_time: start_time + duration_min
+        int durationMin = rs.getInt("duration_min");
+        OffsetDateTime endTime = startTime.plusMinutes(durationMin);
+        s.setEndTime(endTime);
+            
         s.setBasePrice(rs.getBigDecimal("base_price"));
         s.setStatus(rs.getString("status"));
         s.setMovieTitle(rs.getString("movie_title"));

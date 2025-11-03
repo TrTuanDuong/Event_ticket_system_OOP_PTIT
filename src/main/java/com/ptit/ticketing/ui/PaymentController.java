@@ -101,7 +101,10 @@ public class PaymentController {
         }
 
         if (currentShowtime != null) {
-            showtimeLabel.setText(currentShowtime.getStartTime().toLocalDateTime().toString());
+            // Format thời gian với timezone để hiển thị đúng giờ địa phương
+            java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter
+                    .ofPattern("dd/MM/yyyy HH:mm");
+            showtimeLabel.setText(currentShowtime.getStartTime().format(formatter));
             auditoriumLabel.setText(currentShowtime.getAuditoriumName());
         }
 
@@ -258,12 +261,16 @@ public class PaymentController {
 
             if ("qr_code".equals(selectedPaymentMethod)) {
                 // QR payment - pending approval
+                // Format thời gian đúng
+                java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter
+                        .ofPattern("dd/MM/yyyy HH:mm");
+
                 successAlert.setTitle("Payment Request Sent!");
                 successAlert.setHeaderText("⏳ Waiting for Admin Approval");
                 successAlert.setContentText(
                         "Booking ID: " + booking.getId() + "\n\n" +
                                 "Movie: " + currentMovie.getTitle() + "\n" +
-                                "Time: " + currentShowtime.getStartTime().toLocalDateTime() + "\n" +
+                                "Time: " + currentShowtime.getStartTime().format(formatter) + "\n" +
                                 "Auditorium: " + currentShowtime.getAuditoriumName() + "\n\n" +
                                 "Seats: " + String.join(", ", seatLabels) + "\n" +
                                 "Total: " + String.format("%.0f VND", totalAmount.doubleValue()) + "\n\n" +
@@ -272,12 +279,16 @@ public class PaymentController {
                                 "⏳ Your booking will be confirmed once the admin approves your QR payment.");
             } else {
                 // Cash payment - confirmed immediately
+                // Format thời gian đúng
+                java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter
+                        .ofPattern("dd/MM/yyyy HH:mm");
+
                 successAlert.setTitle("Payment Successful!");
                 successAlert.setHeaderText("✅ Your booking has been confirmed");
                 successAlert.setContentText(
                         "Booking ID: " + booking.getId() + "\n\n" +
                                 "Movie: " + currentMovie.getTitle() + "\n" +
-                                "Time: " + currentShowtime.getStartTime().toLocalDateTime() + "\n" +
+                                "Time: " + currentShowtime.getStartTime().format(formatter) + "\n" +
                                 "Auditorium: " + currentShowtime.getAuditoriumName() + "\n\n" +
                                 "Seats: " + String.join(", ", seatLabels) + "\n" +
                                 "Total: " + String.format("%.0f VND", totalAmount.doubleValue()) + "\n\n" +

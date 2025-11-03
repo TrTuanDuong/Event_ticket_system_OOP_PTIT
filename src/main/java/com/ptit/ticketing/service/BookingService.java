@@ -8,7 +8,9 @@ import com.ptit.ticketing.util.Tx;
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Timestamp;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -135,12 +137,24 @@ public class BookingService extends BaseService {
                 b.setStatus(rs.getString("status"));
                 b.setTotalAmount(rs.getBigDecimal("total_amount"));
                 b.setPaymentMethod(rs.getString("payment_method"));
-                b.setCreatedAt(rs.getObject("created_at", OffsetDateTime.class));
-                b.setExpiresAt(rs.getObject("expires_at", OffsetDateTime.class));
+
+                // Fix timezone: Convert Timestamp to OffsetDateTime with Vietnam timezone
+                Timestamp createdAtTs = rs.getTimestamp("created_at");
+                Timestamp expiresAtTs = rs.getTimestamp("expires_at");
+                Timestamp showtimeStartTs = rs.getTimestamp("showtime_start");
+
+                b.setCreatedAt(createdAtTs.toInstant()
+                        .atZone(ZoneId.of("Asia/Ho_Chi_Minh"))
+                        .toOffsetDateTime());
+                b.setExpiresAt(expiresAtTs.toInstant()
+                        .atZone(ZoneId.of("Asia/Ho_Chi_Minh"))
+                        .toOffsetDateTime());
 
                 // Additional fields from JOIN
                 b.setMovieTitle(rs.getString("movie_title"));
-                b.setShowtimeStart(rs.getObject("showtime_start", OffsetDateTime.class));
+                b.setShowtimeStart(showtimeStartTs.toInstant()
+                        .atZone(ZoneId.of("Asia/Ho_Chi_Minh"))
+                        .toOffsetDateTime());
 
                 bookings.add(b);
             }

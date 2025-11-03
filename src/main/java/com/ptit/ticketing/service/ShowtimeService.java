@@ -31,6 +31,13 @@ public class ShowtimeService extends BaseService {
     }
 
     /**
+     * Lấy TẤT CẢ showtimes (cho Admin Panel) - bao gồm cả đang chiếu và đã kết thúc
+     */
+    public List<Showtime> getAllShowtimes() {
+        return Tx.withTx(ds, conn -> showtimeRepo.findAll(conn));
+    }
+
+    /**
      * Lấy showtimes của một movie cụ thể
      */
     public List<Showtime> getShowtimesByMovie(UUID movieId) {
@@ -132,6 +139,7 @@ public class ShowtimeService extends BaseService {
                 com.ptit.ticketing.domain.Movie m = new com.ptit.ticketing.domain.Movie();
                 m.setId((UUID) rs.getObject("id"));
                 m.setTitle(rs.getString("title"));
+                m.setDurationMin(rs.getInt("duration_min")); // ← THÊM DURATION!
                 movies.add(m);
             }
             return movies;

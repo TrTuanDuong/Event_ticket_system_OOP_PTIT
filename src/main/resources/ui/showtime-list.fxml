@@ -15,7 +15,7 @@
         <VBox
             style="-fx-background-color: linear-gradient(to right, #667eea, #764ba2); -fx-padding: 20 30;">
             <HBox alignment="CENTER_LEFT" spacing="20">
-                <Button fx:id="backButton" text="← Back to Movies" onAction="#handleBack"
+                <Button fx:id="backButton" text="← Back" onAction="#handleBack"
                     style="-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20; -fx-background-radius: 8; -fx-cursor: hand;">
                     <font>
                         <Font name="System Bold" size="14.0" />

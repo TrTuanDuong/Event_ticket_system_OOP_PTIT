@@ -173,8 +173,14 @@ public class ShowtimeListController {
 
         showtimesContainer.getChildren().clear();
 
-        if (showtimes.isEmpty()) {
-            Label noShowtimes = new Label("No showtimes available for this date");
+        // Filter out các suất chiếu đã bắt đầu
+        OffsetDateTime now = OffsetDateTime.now();
+        List<Showtime> availableShowtimes = showtimes.stream()
+                .filter(st -> st.getStartTime().isAfter(now))
+                .toList();
+
+        if (availableShowtimes.isEmpty()) {
+            Label noShowtimes = new Label("Không có suất chiếu nào khả dụng cho ngày này");
             noShowtimes.setStyle("-fx-font-size: 16px; -fx-text-fill: #7f8c8d;");
             showtimesContainer.getChildren().add(noShowtimes);
             return;
@@ -182,7 +188,7 @@ public class ShowtimeListController {
 
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
-        for (Showtime showtime : showtimes) {
+        for (Showtime showtime : availableShowtimes) {
             VBox showtimeCard = createShowtimeCard(showtime, timeFormatter);
             showtimesContainer.getChildren().add(showtimeCard);
             VBox.setMargin(showtimeCard, new Insets(10));
@@ -236,6 +242,15 @@ public class ShowtimeListController {
     }
 
     private void handleSelectShowtime(Showtime showtime) {
+        // Double-check: Kiểm tra xem suất chiếu đã bắt đầu chưa (safety check)
+        OffsetDateTime now = OffsetDateTime.now();
+        if (showtime.getStartTime().isBefore(now)) {
+            showAlert("Không thể đặt vé",
+                    "⚠️ Suất chiếu này đã bắt đầu!\n\n" +
+                            "Vui lòng chọn suất chiếu khác.");
+            return;
+        }
+
         try {
             // Navigate to seat map
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/SeatMap.fxml"));

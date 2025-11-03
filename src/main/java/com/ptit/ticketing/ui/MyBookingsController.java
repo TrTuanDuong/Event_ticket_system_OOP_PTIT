@@ -51,7 +51,7 @@ public class MyBookingsController {
     private void loadBookings() {
         try {
             List<Booking> bookings = bookingService.getUserBookings(
-                    SessionManager.getInstance().getCurrentUser().getId());
+                    SessionManager.getCurrentUser().getId());
 
             displayBookings(bookings);
             System.out.println("✅ Loaded " + bookings.size() + " bookings");
@@ -287,10 +287,21 @@ public class MyBookingsController {
                 paymentMethod = "Pending";
             }
             addDetailRow(grid, row++, "💳 Payment Method:", paymentMethod.toUpperCase());
-            addDetailRow(grid, row++, "📅 Booked At:", booking.getCreatedAt().toLocalDateTime()
-                    .format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
-            addDetailRow(grid, row++, "⏰ Expires At:", booking.getExpiresAt().toLocalDateTime()
-                    .format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
+
+            // Format với timezone để giữ nguyên giờ địa phương
+            java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter
+                    .ofPattern("dd/MM/yyyy HH:mm:ss");
+
+            addDetailRow(grid, row++, "📅 Booked At:",
+                    booking.getCreatedAt().format(formatter));
+
+            // Chỉ hiển thị "Expires At" nếu booking chưa thanh toán
+            // (pending/pending_approval)
+            String status = booking.getStatus().toLowerCase();
+            if (status.equals("pending") || status.equals("pending_approval")) {
+                addDetailRow(grid, row++, "⏰ Expires At:",
+                        booking.getExpiresAt().format(formatter));
+            }
 
             content.getChildren().addAll(headerBox, new Separator(), grid);
 
