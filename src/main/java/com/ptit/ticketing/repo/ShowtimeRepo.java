@@ -174,19 +174,19 @@ public class ShowtimeRepo extends BaseRepo {
         s.setId((UUID) rs.getObject("id"));
         s.setMovieId((UUID) rs.getObject("movie_id"));
         s.setAuditoriumId((UUID) rs.getObject("auditorium_id"));
-        
+
         // FIX TIMEZONE: Convert từ UTC sang Asia/Ho_Chi_Minh (+07:00)
         OffsetDateTime startTime = rs.getTimestamp("start_time")
-            .toInstant()
-            .atZone(java.time.ZoneId.of("Asia/Ho_Chi_Minh"))
-            .toOffsetDateTime();
+                .toInstant()
+                .atZone(java.time.ZoneId.of("Asia/Ho_Chi_Minh"))
+                .toOffsetDateTime();
         s.setStartTime(startTime);
-        
+
         // AUTO-CALCULATE end_time: start_time + duration_min
         int durationMin = rs.getInt("duration_min");
         OffsetDateTime endTime = startTime.plusMinutes(durationMin);
         s.setEndTime(endTime);
-            
+
         s.setBasePrice(rs.getBigDecimal("base_price"));
         s.setStatus(rs.getString("status"));
         s.setMovieTitle(rs.getString("movie_title"));

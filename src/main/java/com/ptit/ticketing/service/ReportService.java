@@ -21,7 +21,7 @@ import java.util.Map;
  * Service for generating reports and statistics
  */
 public class ReportService extends BaseService {
-    
+
     public ReportService(DataSource ds) {
         super(ds);
     }
@@ -42,10 +42,21 @@ public class ReportService extends BaseService {
             this.totalTickets = totalTickets;
         }
 
-        public LocalDate getDate() { return date; }
-        public BigDecimal getTotalRevenue() { return totalRevenue; }
-        public int getTotalBookings() { return totalBookings; }
-        public int getTotalTickets() { return totalTickets; }
+        public LocalDate getDate() {
+            return date;
+        }
+
+        public BigDecimal getTotalRevenue() {
+            return totalRevenue;
+        }
+
+        public int getTotalBookings() {
+            return totalBookings;
+        }
+
+        public int getTotalTickets() {
+            return totalTickets;
+        }
     }
 
     /**
@@ -64,10 +75,21 @@ public class ReportService extends BaseService {
             this.totalRevenue = totalRevenue;
         }
 
-        public String getMovieTitle() { return movieTitle; }
-        public int getTotalShowtimes() { return totalShowtimes; }
-        public int getTotalTickets() { return totalTickets; }
-        public BigDecimal getTotalRevenue() { return totalRevenue; }
+        public String getMovieTitle() {
+            return movieTitle;
+        }
+
+        public int getTotalShowtimes() {
+            return totalShowtimes;
+        }
+
+        public int getTotalTickets() {
+            return totalTickets;
+        }
+
+        public BigDecimal getTotalRevenue() {
+            return totalRevenue;
+        }
     }
 
     /**
@@ -76,7 +98,7 @@ public class ReportService extends BaseService {
     public List<DailyRevenue> getDailyRevenue(LocalDate fromDate, LocalDate toDate) {
         return Tx.inReadOnly(ds, conn -> {
             String sql = """
-                    SELECT 
+                    SELECT
                         DATE(b.created_at) as booking_date,
                         SUM(b.total_amount) as total_revenue,
                         COUNT(DISTINCT b.id) as total_bookings,
@@ -88,20 +110,19 @@ public class ReportService extends BaseService {
                     GROUP BY DATE(b.created_at)
                     ORDER BY booking_date DESC
                     """;
-            
+
             try (PreparedStatement st = conn.prepareStatement(sql)) {
                 st.setDate(1, Date.valueOf(fromDate));
                 st.setDate(2, Date.valueOf(toDate));
-                
+
                 List<DailyRevenue> results = new ArrayList<>();
                 try (ResultSet rs = st.executeQuery()) {
                     while (rs.next()) {
                         results.add(new DailyRevenue(
-                            rs.getDate("booking_date").toLocalDate(),
-                            rs.getBigDecimal("total_revenue"),
-                            rs.getInt("total_bookings"),
-                            rs.getInt("total_tickets")
-                        ));
+                                rs.getDate("booking_date").toLocalDate(),
+                                rs.getBigDecimal("total_revenue"),
+                                rs.getInt("total_bookings"),
+                                rs.getInt("total_tickets")));
                     }
                 }
                 return results;
@@ -115,7 +136,7 @@ public class ReportService extends BaseService {
     public List<MovieRevenue> getMovieRevenue(LocalDate fromDate, LocalDate toDate) {
         return Tx.inReadOnly(ds, conn -> {
             String sql = """
-                    SELECT 
+                    SELECT
                         m.title as movie_title,
                         COUNT(DISTINCT s.id) as total_showtimes,
                         COUNT(t.id) as total_tickets,
@@ -130,20 +151,19 @@ public class ReportService extends BaseService {
                     HAVING COUNT(t.id) > 0
                     ORDER BY total_revenue DESC
                     """;
-            
+
             try (PreparedStatement st = conn.prepareStatement(sql)) {
                 st.setDate(1, Date.valueOf(fromDate));
                 st.setDate(2, Date.valueOf(toDate));
-                
+
                 List<MovieRevenue> results = new ArrayList<>();
                 try (ResultSet rs = st.executeQuery()) {
                     while (rs.next()) {
                         results.add(new MovieRevenue(
-                            rs.getString("movie_title"),
-                            rs.getInt("total_showtimes"),
-                            rs.getInt("total_tickets"),
-                            rs.getBigDecimal("total_revenue")
-                        ));
+                                rs.getString("movie_title"),
+                                rs.getInt("total_showtimes"),
+                                rs.getInt("total_tickets"),
+                                rs.getBigDecimal("total_revenue")));
                     }
                 }
                 return results;
@@ -209,30 +229,27 @@ public class ReportService extends BaseService {
 
         int rowNum = 3;
         String[] labels = {
-            "Tổng doanh thu:",
-            "Tổng số vé bán:",
-            "Tổng số booking:",
-            "Doanh thu trung bình/ngày:",
-            "Số vé trung bình/ngày:"
+                "Tổng doanh thu:",
+                "Tổng số vé bán:",
+                "Tổng số booking:",
+                "Doanh thu trung bình/ngày:",
+                "Số vé trung bình/ngày:"
         };
 
         for (String label : labels) {
             Row row = sheet.createRow(rowNum++);
             row.createCell(0).setCellValue(label);
             Cell valueCell = row.createCell(1);
-            
+
             switch (label) {
                 case "Tổng doanh thu:" -> valueCell.setCellValue(
-                    String.format("%,d VNĐ", ((BigDecimal) summary.get("totalRevenue")).longValue())
-                );
+                        String.format("%,d VNĐ", ((BigDecimal) summary.get("totalRevenue")).longValue()));
                 case "Tổng số vé bán:" -> valueCell.setCellValue((Integer) summary.get("totalTickets"));
                 case "Tổng số booking:" -> valueCell.setCellValue((Integer) summary.get("totalBookings"));
                 case "Doanh thu trung bình/ngày:" -> valueCell.setCellValue(
-                    String.format("%,d VNĐ", ((BigDecimal) summary.get("avgDailyRevenue")).longValue())
-                );
+                        String.format("%,d VNĐ", ((BigDecimal) summary.get("avgDailyRevenue")).longValue()));
                 case "Số vé trung bình/ngày:" -> valueCell.setCellValue(
-                    String.format("%.1f vé", (Double) summary.get("avgDailyTickets"))
-                );
+                        String.format("%.1f vé", (Double) summary.get("avgDailyTickets")));
             }
         }
     }
@@ -248,7 +265,7 @@ public class ReportService extends BaseService {
 
         // Header row
         Row headerRow = sheet.createRow(0);
-        String[] headers = {"Ngày", "Doanh thu (VNĐ)", "Số booking", "Số vé"};
+        String[] headers = { "Ngày", "Doanh thu (VNĐ)", "Số booking", "Số vé" };
         for (int i = 0; i < headers.length; i++) {
             Cell cell = headerRow.createCell(i);
             cell.setCellValue(headers[i]);
@@ -278,7 +295,7 @@ public class ReportService extends BaseService {
 
         // Header row
         Row headerRow = sheet.createRow(0);
-        String[] headers = {"Tên phim", "Số suất chiếu", "Số vé bán", "Doanh thu (VNĐ)"};
+        String[] headers = { "Tên phim", "Số suất chiếu", "Số vé bán", "Doanh thu (VNĐ)" };
         for (int i = 0; i < headers.length; i++) {
             Cell cell = headerRow.createCell(i);
             cell.setCellValue(headers[i]);
@@ -300,7 +317,7 @@ public class ReportService extends BaseService {
     private Map<String, Object> getSummary(LocalDate fromDate, LocalDate toDate) {
         return Tx.inReadOnly(ds, conn -> {
             String sql = """
-                    SELECT 
+                    SELECT
                         COALESCE(SUM(b.total_amount), 0) as total_revenue,
                         COUNT(DISTINCT b.id) as total_bookings,
                         COUNT(t.id) as total_tickets
@@ -309,26 +326,27 @@ public class ReportService extends BaseService {
                     WHERE b.status = 'paid'
                         AND DATE(b.created_at) BETWEEN ? AND ?
                     """;
-            
+
             try (PreparedStatement st = conn.prepareStatement(sql)) {
                 st.setDate(1, Date.valueOf(fromDate));
                 st.setDate(2, Date.valueOf(toDate));
-                
+
                 try (ResultSet rs = st.executeQuery()) {
                     if (rs.next()) {
                         Map<String, Object> summary = new HashMap<>();
                         BigDecimal totalRevenue = rs.getBigDecimal("total_revenue");
                         int totalBookings = rs.getInt("total_bookings");
                         int totalTickets = rs.getInt("total_tickets");
-                        
+
                         long days = java.time.temporal.ChronoUnit.DAYS.between(fromDate, toDate) + 1;
-                        
+
                         summary.put("totalRevenue", totalRevenue);
                         summary.put("totalBookings", totalBookings);
                         summary.put("totalTickets", totalTickets);
-                        summary.put("avgDailyRevenue", totalRevenue.divide(BigDecimal.valueOf(days), 2, java.math.RoundingMode.HALF_UP));
+                        summary.put("avgDailyRevenue",
+                                totalRevenue.divide(BigDecimal.valueOf(days), 2, java.math.RoundingMode.HALF_UP));
                         summary.put("avgDailyTickets", (double) totalTickets / days);
-                        
+
                         return summary;
                     }
                     return new HashMap<>();

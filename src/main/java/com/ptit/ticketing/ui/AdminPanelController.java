@@ -942,7 +942,7 @@ public class AdminPanelController {
 
             // Apply filter - SỬ DỤNG TIMEZONE +07:00
             java.time.OffsetDateTime now = java.time.OffsetDateTime.now(java.time.ZoneId.of("Asia/Ho_Chi_Minh"));
-            
+
             List<com.ptit.ticketing.domain.Showtime> filteredShowtimes = showtimes;
 
             switch (currentShowtimeFilter) {
@@ -2211,17 +2211,16 @@ public class AdminPanelController {
         fromDatePicker.setValue(java.time.LocalDate.now().minusMonths(1));
         DatePicker toDatePicker = new DatePicker();
         toDatePicker.setValue(java.time.LocalDate.now());
-        
+
         Button refreshButton = new Button("🔄 Làm mới");
         Button exportButton = new Button("📥 Xuất Excel");
         exportButton.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold;");
-        
+
         dateBox.getChildren().addAll(
-            new Label("Từ:"), fromDatePicker,
-            new Label("Đến:"), toDatePicker,
-            refreshButton,
-            exportButton
-        );
+                new Label("Từ:"), fromDatePicker,
+                new Label("Đến:"), toDatePicker,
+                refreshButton,
+                exportButton);
 
         // Revenue display area
         VBox statsBox = new VBox(10);
@@ -2235,28 +2234,27 @@ public class AdminPanelController {
             try {
                 java.time.LocalDate fromDate = fromDatePicker.getValue();
                 java.time.LocalDate toDate = toDatePicker.getValue();
-                
+
                 loadRevenueStats(statsBox, fromDate, toDate);
             } catch (Exception ex) {
                 showError("Lỗi", "Không thể tải thống kê: " + ex.getMessage());
             }
         });
-        
+
         // Export button handler
         exportButton.setOnAction(e -> {
             try {
                 java.time.LocalDate fromDate = fromDatePicker.getValue();
                 java.time.LocalDate toDate = toDatePicker.getValue();
-                
+
                 // Chọn nơi lưu file
                 javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
                 fileChooser.setTitle("Lưu báo cáo Excel");
-                fileChooser.setInitialFileName("BaoCaoDoanhThu_" + 
-                    java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd")) + 
-                    ".xlsx");
+                fileChooser.setInitialFileName("BaoCaoDoanhThu_" +
+                        java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd")) +
+                        ".xlsx");
                 fileChooser.getExtensionFilters().add(
-                    new javafx.stage.FileChooser.ExtensionFilter("Excel Files", "*.xlsx")
-                );
+                        new javafx.stage.FileChooser.ExtensionFilter("Excel Files", "*.xlsx"));
 
                 Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
                 java.io.File file = fileChooser.showSaveDialog(stage);
@@ -2264,11 +2262,15 @@ public class AdminPanelController {
                 if (file != null) {
                     // Export to Excel
                     reportService.exportRevenueToExcel(fromDate, toDate, file.getAbsolutePath());
-                    showSuccess("Thành công", 
-                        "✅ Đã xuất báo cáo doanh thu!\n\n" +
-                        "Từ ngày: " + fromDate.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n" +
-                        "Đến ngày: " + toDate.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n\n" +
-                        "File: " + file.getAbsolutePath());
+                    showSuccess("Thành công",
+                            "✅ Đã xuất báo cáo doanh thu!\n\n" +
+                                    "Từ ngày: "
+                                    + fromDate.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n"
+                                    +
+                                    "Đến ngày: "
+                                    + toDate.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n\n"
+                                    +
+                                    "File: " + file.getAbsolutePath());
                 }
 
             } catch (Exception ex) {
@@ -2299,31 +2301,31 @@ public class AdminPanelController {
             container.getChildren().add(titleLabel);
 
             // Get summary data
-            java.util.List<com.ptit.ticketing.service.ReportService.DailyRevenue> dailyRevenues = 
-                reportService.getDailyRevenue(fromDate, toDate);
-            
+            java.util.List<com.ptit.ticketing.service.ReportService.DailyRevenue> dailyRevenues = reportService
+                    .getDailyRevenue(fromDate, toDate);
+
             java.math.BigDecimal totalRevenue = dailyRevenues.stream()
-                .map(com.ptit.ticketing.service.ReportService.DailyRevenue::getTotalRevenue)
-                .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
-            
+                    .map(com.ptit.ticketing.service.ReportService.DailyRevenue::getTotalRevenue)
+                    .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
+
             int totalBookings = dailyRevenues.stream()
-                .mapToInt(com.ptit.ticketing.service.ReportService.DailyRevenue::getTotalBookings)
-                .sum();
-            
+                    .mapToInt(com.ptit.ticketing.service.ReportService.DailyRevenue::getTotalBookings)
+                    .sum();
+
             int totalTickets = dailyRevenues.stream()
-                .mapToInt(com.ptit.ticketing.service.ReportService.DailyRevenue::getTotalTickets)
-                .sum();
+                    .mapToInt(com.ptit.ticketing.service.ReportService.DailyRevenue::getTotalTickets)
+                    .sum();
 
             VBox summaryBox = new VBox(8);
             summaryBox.setPadding(new Insets(10));
-            summaryBox.setStyle("-fx-background-color: white; -fx-background-radius: 5; -fx-border-color: #bdc3c7; -fx-border-radius: 5;");
-            
+            summaryBox.setStyle(
+                    "-fx-background-color: white; -fx-background-radius: 5; -fx-border-color: #bdc3c7; -fx-border-radius: 5;");
+
             summaryBox.getChildren().addAll(
-                createStatRow("💰 Tổng doanh thu:", String.format("%,d VNĐ", totalRevenue.longValue())),
-                createStatRow("🎫 Tổng số vé:", String.valueOf(totalTickets)),
-                createStatRow("📦 Tổng booking:", String.valueOf(totalBookings))
-            );
-            
+                    createStatRow("💰 Tổng doanh thu:", String.format("%,d VNĐ", totalRevenue.longValue())),
+                    createStatRow("🎫 Tổng số vé:", String.valueOf(totalTickets)),
+                    createStatRow("📦 Tổng booking:", String.valueOf(totalBookings)));
+
             container.getChildren().add(summaryBox);
 
             // Movie revenue
@@ -2331,8 +2333,8 @@ public class AdminPanelController {
             movieTitleLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 10 0 5 0;");
             container.getChildren().add(movieTitleLabel);
 
-            java.util.List<com.ptit.ticketing.service.ReportService.MovieRevenue> movieRevenues = 
-                reportService.getMovieRevenue(fromDate, toDate);
+            java.util.List<com.ptit.ticketing.service.ReportService.MovieRevenue> movieRevenues = reportService
+                    .getMovieRevenue(fromDate, toDate);
 
             if (movieRevenues.isEmpty()) {
                 Label emptyLabel = new Label("Không có dữ liệu");
@@ -2342,17 +2344,18 @@ public class AdminPanelController {
                 for (com.ptit.ticketing.service.ReportService.MovieRevenue mr : movieRevenues) {
                     HBox movieBox = new HBox(10);
                     movieBox.setPadding(new Insets(10));
-                    movieBox.setStyle("-fx-background-color: white; -fx-background-radius: 5; -fx-border-color: #bdc3c7; -fx-border-radius: 5;");
+                    movieBox.setStyle(
+                            "-fx-background-color: white; -fx-background-radius: 5; -fx-border-color: #bdc3c7; -fx-border-radius: 5;");
                     movieBox.setAlignment(Pos.CENTER_LEFT);
 
                     VBox infoBox = new VBox(5);
                     Label nameLabel = new Label(mr.getMovieTitle());
                     nameLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
-                    
-                    Label detailLabel = new Label(String.format("%d suất chiếu • %d vé bán", 
-                        mr.getTotalShowtimes(), mr.getTotalTickets()));
+
+                    Label detailLabel = new Label(String.format("%d suất chiếu • %d vé bán",
+                            mr.getTotalShowtimes(), mr.getTotalTickets()));
                     detailLabel.setStyle("-fx-text-fill: #7f8c8d; -fx-font-size: 12px;");
-                    
+
                     infoBox.getChildren().addAll(nameLabel, detailLabel);
 
                     Region spacer = new Region();
@@ -2377,14 +2380,14 @@ public class AdminPanelController {
     private HBox createStatRow(String label, String value) {
         HBox row = new HBox(10);
         row.setAlignment(Pos.CENTER_LEFT);
-        
+
         Label labelText = new Label(label);
         labelText.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
         labelText.setPrefWidth(200);
-        
+
         Label valueText = new Label(value);
         valueText.setStyle("-fx-font-size: 14px; -fx-text-fill: #27ae60;");
-        
+
         row.getChildren().addAll(labelText, valueText);
         return row;
     }
