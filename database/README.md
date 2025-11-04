@@ -1,7 +1,7 @@
 # 🗄️ DATABASE SETUP GUIDE
 
-> **Thời gian setup**: 2 phút ⚡  
-> **File sử dụng**: `cinema_dump.sql` (có sẵn trong repo)  
+> **Thời gian setup**: 2 phút ⚡
+> **File sử dụng**: `cinema_dump.sql` (có sẵn trong repo)
 > **Cập nhật**: Tháng 11/2025
 
 ---

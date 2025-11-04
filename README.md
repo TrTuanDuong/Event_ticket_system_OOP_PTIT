@@ -240,70 +240,90 @@ mvn javafx:run
 
 ```
 Event_ticket_system_OOP_PTIT/
-├── src/main/
-│   ├── java/com/ptit/ticketing/
-│   │   ├── MainApp.java                    # ✅ Entry point
-│   │   ├── config/
-│   │   │   └── Database.java              # ✅ HikariCP connection pool
-│   │   ├── domain/                         # ✅ 7 entities
-│   │   │   ├── User.java
-│   │   │   ├── Movie.java
-│   │   │   ├── Showtime.java
-│   │   │   ├── Auditorium.java
-│   │   │   ├── Seat.java
-│   │   │   ├── Booking.java
-│   │   │   └── Ticket.java
-│   │   ├── repo/                           # ✅ Data Access Layer
-│   │   │   ├── BaseRepo.java
-│   │   │   ├── UserRepo.java
-│   │   │   ├── MovieRepo.java
-│   │   │   ├── ShowtimeRepo.java
-│   │   │   ├── BookingRepo.java
-│   │   │   └── SeatRepo.java
-│   │   ├── service/                        # ✅ Business Logic
-│   │   │   ├── BaseService.java
-│   │   │   ├── AuthService.java
-│   │   │   ├── SessionManager.java
-│   │   │   ├── SessionTimer.java
-│   │   │   ├── MovieService.java
-│   │   │   ├── ShowtimeService.java
-│   │   │   └── BookingService.java
-│   │   ├── ui/                             # ✅ Controllers
+│
+├── 📁 database/                          # Database scripts
+│   ├── cinema_schema.sql                 # Schema (CREATE TABLE)
+│   ├── cinema_data.sql                   # Sample data (INSERT)
+│   ├── cinema_dump.sql                   # Full dump
+│   ├── export-database.sh                # Export script
+│   └── README.md                         # Database docs
+│
+├── 📁 src/main/
+│   ├── 📁 java/com/ptit/ticketing/
+│   │   ├── MainApp.java                  # 🚀 Entry point
+│   │   ├── TestConnection.java           # DB test
+│   │   │
+│   │   ├── 📁 ui/                        # Controllers (10 files)
 │   │   │   ├── LoginController.java
 │   │   │   ├── RegisterController.java
 │   │   │   ├── DashboardController.java
 │   │   │   ├── MovieListController.java
-│   │   │   ├── EventController.java
+│   │   │   ├── ShowtimeListController.java
 │   │   │   ├── SeatMapController.java
 │   │   │   ├── PaymentController.java
-│   │   │   ├── AdminPanelController.java
+│   │   │   ├── MyBookingsController.java
 │   │   │   ├── ProfileSettingsController.java
-│   │   │   └── MyBookingsController.java
-│   │   ├── auth/
-│   │   │   └── DjangoPassword.java        # ✅ PBKDF2-SHA256
-│   │   └── util/
-│   │       └── Tx.java                    # ✅ Transaction helper
-│   └── resources/
-│       ├── application.properties          # ✅ DB config
-│       └── ui/                             # ✅ FXML files
-│           ├── login.fxml
-│           ├── register.fxml
-│           ├── dashboard.fxml
-│           ├── movie-list.fxml
-│           ├── EventView.fxml
-│           ├── SeatMap.fxml
-│           ├── payment.fxml
-│           ├── admin-panel.fxml
-│           ├── profile-settings.fxml
-│           └── my-bookings.fxml
-├── database/
-│   ├── cinema_dump.sql                     # ✅ Full database dump
-│   ├── cinema_schema.sql                   # ✅ Schema only
-│   └── README.md                           # ✅ Database setup guide
-├── pom.xml                                 # ✅ Maven dependencies
-├── README.md                               # ✅ Main documentation (this file)
-├── OVERVIEW.md                             # ✅ Project overview
-└── Chạy.md                                 # ✅ Development guide
+│   │   │   └── AdminPanelController.java (2529 lines)
+│   │   │
+│   │   ├── 📁 domain/                    # Entities (8 models)
+│   │   │   ├── User.java
+│   │   │   ├── Movie.java
+│   │   │   ├── Genre.java
+│   │   │   ├── Auditorium.java
+│   │   │   ├── Seat.java
+│   │   │   ├── Showtime.java
+│   │   │   ├── Booking.java
+│   │   │   └── Ticket.java
+│   │   │
+│   │   ├── 📁 repo/                      # Repositories (6 repos)
+│   │   │   ├── BaseRepo.java
+│   │   │   ├── UserRepo.java
+│   │   │   ├── MovieRepo.java
+│   │   │   ├── ShowtimeRepo.java
+│   │   │   ├── SeatRepo.java
+│   │   │   └── BookingRepo.java
+│   │   │
+│   │   ├── 📁 service/                   # Business logic (9 services)
+│   │   │   ├── BaseService.java
+│   │   │   ├── AuthService.java
+│   │   │   ├── MovieService.java
+│   │   │   ├── ShowtimeService.java
+│   │   │   ├── SeatService.java
+│   │   │   ├── BookingService.java
+│   │   │   ├── ReportService.java        # 📊 Revenue stats + Excel
+│   │   │   ├── SessionManager.java
+│   │   │   └── SessionTimer.java
+│   │   │
+│   │   ├── 📁 config/
+│   │   │   └── Database.java             # Connection pool
+│   │   │
+│   │   ├── 📁 auth/
+│   │   │   └── DjangoPassword.java       # PBKDF2 hashing
+│   │   │
+│   │   └── 📁 util/
+│   │       └── Tx.java                   # Transaction helper
+│   │
+│   └── 📁 resources/
+│       ├── application.properties        # Database config
+│       ├── 📁 ui/ (10 FXML files)
+│       │   ├── login.fxml
+│       │   ├── register.fxml
+│       │   ├── dashboard.fxml
+│       │   ├── movie-list.fxml
+│       │   ├── showtime-list.fxml
+│       │   ├── SeatMap.fxml
+│       │   ├── payment.fxml
+│       │   ├── my-bookings.fxml
+│       │   ├── profile-settings.fxml
+│       │   └── admin-panel.fxml
+│       │
+│       └── 📁 ImageView/
+│           └── qr-payment.png            # QR code image
+├── 📁 target/                            # Compiled classes (Maven)
+├── pom.xml                               # Maven config
+├── README.md                             # Project docs
+├── FEATURES.md                           # Feature list
+└── Chạy.md                               # Run instructions
 ```
 
 ---

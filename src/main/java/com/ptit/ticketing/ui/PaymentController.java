@@ -59,7 +59,7 @@ public class PaymentController {
     private VBox qrCodeContainer;
 
     @FXML
-    private Label qrCodeLabel;
+    private javafx.scene.image.ImageView qrImageView;
 
     @FXML
     private Label qrAmountLabel;
@@ -130,10 +130,15 @@ public class PaymentController {
         qrCodeContainer.setVisible(true);
         qrCodeContainer.setManaged(true);
 
-        // Generate QR code text (trong thực tế có thể dùng thư viện ZXing để tạo QR
-        // image)
-        String qrText = generateQRCodeText();
-        qrCodeLabel.setText("🔲 QR CODE\n" + qrText);
+        // Load QR code image
+        try {
+            String imagePath = getClass().getResource("/ImageView/qr-payment.png").toExternalForm();
+            javafx.scene.image.Image qrImage = new javafx.scene.image.Image(imagePath);
+            qrImageView.setImage(qrImage);
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Không thể load ảnh QR code: " + e.getMessage());
+        }
 
         System.out.println("✅ Selected payment method: QR Code");
     }
@@ -389,13 +394,6 @@ public class PaymentController {
             e.printStackTrace();
             showAlert("Error", "Failed to load My Bookings: " + e.getMessage());
         }
-    }
-
-    private String generateQRCodeText() {
-        // Trong thực tế, đây có thể là payment URL hoặc data để generate QR
-        return "BOOKING:" + System.currentTimeMillis() +
-                "\nAMOUNT:" + String.format("%.0f", totalAmount.doubleValue()) +
-                "\nMOVIE:" + currentMovie.getTitle();
     }
 
     private void showAlert(String title, String message) {

@@ -22,6 +22,9 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -1667,18 +1670,95 @@ public class AdminPanelController {
         Optional<com.ptit.ticketing.domain.Auditorium> result = dialog.showAndWait();
         result.ifPresent(aud -> {
             try (Connection conn = com.ptit.ticketing.config.Database.get().getConnection()) {
-                String sql = "INSERT INTO api_auditorium (id, name, standard_row_count, vip_row_count, couple_row_count, seats_per_row, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())";
-                PreparedStatement ps = conn.prepareStatement(sql);
-                ps.setObject(1, UUID.randomUUID());
-                ps.setString(2, aud.getName());
-                ps.setInt(3, aud.getStandardRowCount());
-                ps.setInt(4, aud.getVipRowCount());
-                ps.setInt(5, aud.getCoupleRowCount());
-                ps.setInt(6, aud.getSeatsPerRow());
-                ps.executeUpdate();
+                conn.setAutoCommit(false); // Start transaction
 
-                showAlert("Success", "✅ Đã thêm phòng chiếu!");
-                loadAuditoriums();
+                try {
+                    // Validate: seats_per_row must be even for couple rows
+                    if (aud.getCoupleRowCount() > 0 && aud.getSeatsPerRow() % 2 != 0) {
+                        showAlert("Error", "⚠️ Số ghế/hàng phải là số chẵn khi có hàng ghế đôi!");
+                        conn.rollback();
+                        return;
+                    }
+
+                    // Insert auditorium
+                    UUID auditoriumId = UUID.randomUUID();
+                    String sqlAud = "INSERT INTO api_auditorium (id, name, standard_row_count, vip_row_count, couple_row_count, seats_per_row, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())";
+                    PreparedStatement psAud = conn.prepareStatement(sqlAud);
+                    psAud.setObject(1, auditoriumId);
+                    psAud.setString(2, aud.getName());
+                    psAud.setInt(3, aud.getStandardRowCount());
+                    psAud.setInt(4, aud.getVipRowCount());
+                    psAud.setInt(5, aud.getCoupleRowCount());
+                    psAud.setInt(6, aud.getSeatsPerRow());
+                    psAud.executeUpdate();
+
+                    // Auto-generate seats
+                    String sqlSeat = "INSERT INTO api_seat (id, row_label, seat_number, seat_type, auditorium_id) VALUES (?, ?, ?, ?, ?)";
+                    PreparedStatement psSeat = conn.prepareStatement(sqlSeat);
+
+                    // Standard seats (rows A, B, C...)
+                    for (int i = 0; i < aud.getStandardRowCount(); i++) {
+                        String rowLabel = String.valueOf((char) ('A' + i));
+                        for (int seatNum = 1; seatNum <= aud.getSeatsPerRow(); seatNum++) {
+                            psSeat.setObject(1, UUID.randomUUID());
+                            psSeat.setString(2, rowLabel);
+                            psSeat.setInt(3, seatNum);
+                            psSeat.setString(4, "standard");
+                            psSeat.setObject(5, auditoriumId);
+                            psSeat.executeUpdate();
+                        }
+                    }
+
+                    // VIP seats
+                    for (int i = 0; i < aud.getVipRowCount(); i++) {
+                        String rowLabel = String.valueOf((char) ('A' + aud.getStandardRowCount() + i));
+                        for (int seatNum = 1; seatNum <= aud.getSeatsPerRow(); seatNum++) {
+                            psSeat.setObject(1, UUID.randomUUID());
+                            psSeat.setString(2, rowLabel);
+                            psSeat.setInt(3, seatNum);
+                            psSeat.setString(4, "vip");
+                            psSeat.setObject(5, auditoriumId);
+                            psSeat.executeUpdate();
+                        }
+                    }
+
+                    // Couple seats - CHỈ TẠO SEATS_PER_ROW / 2 ghế (mỗi ghế là 1 cặp đôi)
+                    int coupleSeatCount = aud.getSeatsPerRow() / 2;
+                    for (int i = 0; i < aud.getCoupleRowCount(); i++) {
+                        String rowLabel = String
+                                .valueOf((char) ('A' + aud.getStandardRowCount() + aud.getVipRowCount() + i));
+                        for (int seatNum = 1; seatNum <= coupleSeatCount; seatNum++) {
+                            psSeat.setObject(1, UUID.randomUUID());
+                            psSeat.setString(2, rowLabel);
+                            psSeat.setInt(3, seatNum);
+                            psSeat.setString(4, "couple");
+                            psSeat.setObject(5, auditoriumId);
+                            psSeat.executeUpdate();
+                        }
+                    }
+
+                    conn.commit(); // Commit transaction
+
+                    int totalSeats = (aud.getStandardRowCount() * aud.getSeatsPerRow()) +
+                            (aud.getVipRowCount() * aud.getSeatsPerRow()) +
+                            (aud.getCoupleRowCount() * coupleSeatCount);
+
+                    showAlert("Success", "✅ Đã thêm phòng chiếu!\n\n" +
+                            "📍 Tên: " + aud.getName() + "\n" +
+                            "🎫 Tổng ghế: " + totalSeats + " ghế\n" +
+                            "   • Standard: " + (aud.getStandardRowCount() * aud.getSeatsPerRow()) + " ghế ("
+                            + aud.getStandardRowCount() + " hàng x " + aud.getSeatsPerRow() + ")\n" +
+                            "   • VIP: " + (aud.getVipRowCount() * aud.getSeatsPerRow()) + " ghế ("
+                            + aud.getVipRowCount() + " hàng x " + aud.getSeatsPerRow() + ")\n" +
+                            "   • Couple: " + (aud.getCoupleRowCount() * coupleSeatCount) + " ghế đôi ("
+                            + aud.getCoupleRowCount() + " hàng x " + coupleSeatCount + " cặp)");
+                    loadAuditoriums();
+
+                } catch (Exception e) {
+                    conn.rollback(); // Rollback on error
+                    throw e;
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
                 showAlert("Error", "Không thể thêm phòng chiếu: " + e.getMessage());
@@ -1776,27 +1856,76 @@ public class AdminPanelController {
     }
 
     private void handleDeleteAuditorium(UUID auditoriumId, String name) {
-        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmAlert.setTitle("Xác nhận Xóa");
-        confirmAlert.setHeaderText("Xóa phòng chiếu?");
-        confirmAlert.setContentText("Bạn có chắc muốn xóa phòng chiếu: " + name + "?");
+        try (Connection conn = com.ptit.ticketing.config.Database.get().getConnection()) {
+            // Check if auditorium has any showtimes
+            String checkShowtimes = "SELECT COUNT(*) FROM api_showtime WHERE auditorium_id = ?";
+            PreparedStatement psCheck = conn.prepareStatement(checkShowtimes);
+            psCheck.setObject(1, auditoriumId);
+            ResultSet rs = psCheck.executeQuery();
+            rs.next();
+            int showtimeCount = rs.getInt(1);
 
-        confirmAlert.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.OK) {
-                try (Connection conn = com.ptit.ticketing.config.Database.get().getConnection()) {
-                    String sql = "DELETE FROM api_auditorium WHERE id = ?";
-                    PreparedStatement ps = conn.prepareStatement(sql);
-                    ps.setObject(1, auditoriumId);
-                    ps.executeUpdate();
-
-                    showAlert("Success", "✅ Đã xóa phòng chiếu!");
-                    loadAuditoriums();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    showAlert("Error", "Không thể xóa phòng chiếu: " + e.getMessage());
-                }
+            if (showtimeCount > 0) {
+                showAlert("Error", "❌ Không thể xóa phòng chiếu!\n\n" +
+                        "Phòng chiếu '" + name + "' đang có " + showtimeCount + " suất chiếu.\n\n" +
+                        "Vui lòng xóa các suất chiếu trước khi xóa phòng chiếu.");
+                return;
             }
-        });
+
+            // Check seat count for confirmation message
+            String checkSeats = "SELECT COUNT(*) FROM api_seat WHERE auditorium_id = ?";
+            PreparedStatement psSeats = conn.prepareStatement(checkSeats);
+            psSeats.setObject(1, auditoriumId);
+            ResultSet rsSeats = psSeats.executeQuery();
+            rsSeats.next();
+            int seatCount = rsSeats.getInt(1);
+
+            // Confirm deletion
+            Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmAlert.setTitle("Xác nhận Xóa");
+            confirmAlert.setHeaderText("Xóa phòng chiếu?");
+            confirmAlert.setContentText("Bạn có chắc muốn xóa phòng chiếu: " + name + "?\n\n" +
+                    "Sẽ xóa " + seatCount + " ghế cùng với phòng chiếu này.");
+
+            confirmAlert.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    try {
+                        conn.setAutoCommit(false); // Start transaction
+
+                        // Delete all seats first (child records)
+                        String deleteSeatsSql = "DELETE FROM api_seat WHERE auditorium_id = ?";
+                        PreparedStatement psDelSeats = conn.prepareStatement(deleteSeatsSql);
+                        psDelSeats.setObject(1, auditoriumId);
+                        int deletedSeats = psDelSeats.executeUpdate();
+
+                        // Delete auditorium (parent record)
+                        String deleteAudSql = "DELETE FROM api_auditorium WHERE id = ?";
+                        PreparedStatement psDelAud = conn.prepareStatement(deleteAudSql);
+                        psDelAud.setObject(1, auditoriumId);
+                        psDelAud.executeUpdate();
+
+                        conn.commit(); // Commit transaction
+
+                        showAlert("Success", "✅ Đã xóa phòng chiếu!\n\n" +
+                                "Đã xóa: " + deletedSeats + " ghế và phòng chiếu '" + name + "'");
+                        loadAuditoriums();
+
+                    } catch (Exception e) {
+                        try {
+                            conn.rollback(); // Rollback on error
+                        } catch (SQLException ex) {
+                            ex.printStackTrace();
+                        }
+                        e.printStackTrace();
+                        showAlert("Error", "Không thể xóa phòng chiếu: " + e.getMessage());
+                    }
+                }
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Không thể kiểm tra phòng chiếu: " + e.getMessage());
+        }
     }
 
     // ==================== BOOKING MANAGEMENT ====================
@@ -2005,7 +2134,12 @@ public class AdminPanelController {
         Label userLabel = new Label("👤 User: " + booking.getUserName());
         userLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #7f8c8d;");
 
-        Label timeLabel = new Label("🕐 " + booking.getShowtimeStart());
+        // Format datetime properly
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        String formattedTime = booking.getShowtimeStart()
+                .atZoneSameInstant(ZoneId.of("Asia/Ho_Chi_Minh"))
+                .format(formatter);
+        Label timeLabel = new Label("🕐 " + formattedTime);
         timeLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #7f8c8d;");
 
         Label amountLabel = new Label("💰 " + String.format("%.0f VND", booking.getTotalAmount().doubleValue()));
