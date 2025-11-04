@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict 2kSRZJ6wkmNxw3oVLDyAWlCTJaafVThd3wdOSobT45Ft9kewj5o08Z7bQscv6jH
+\restrict zvsdMJdjUuXQ2ip6uUByPfEn3WMEMNDn5OwZ6VadBBEUwdu1ZQzQ8Rs3mDADOsy
 
 -- Dumped from database version 14.19 (Homebrew)
 -- Dumped by pg_dump version 14.19 (Homebrew)
@@ -86,6 +86,8 @@ CREATE TABLE public.api_movie (
     release_date date,
     description text NOT NULL,
     poster_url text NOT NULL,
+    genre character varying(100),
+    director character varying(200),
     CONSTRAINT api_movie_duration_min_check CHECK ((duration_min >= 0))
 );
 
@@ -1117,5 +1119,5 @@ ALTER TABLE ONLY public.django_admin_log
 -- PostgreSQL database dump complete
 --
 
-\unrestrict 2kSRZJ6wkmNxw3oVLDyAWlCTJaafVThd3wdOSobT45Ft9kewj5o08Z7bQscv6jH
+\unrestrict zvsdMJdjUuXQ2ip6uUByPfEn3WMEMNDn5OwZ6VadBBEUwdu1ZQzQ8Rs3mDADOsy
 

@@ -31,9 +31,11 @@ psql -d cinema -c "SELECT COUNT(*) FROM api_movie;"
 
 - ✅ 10+ tables
 - ✅ 6 movies mẫu
-- ✅ 160 showtimes
-- ✅ 2 users (admin + user1)
-- ✅ 3 auditoriums
+- ✅ 130 showtimes (đã fix end_time calculation)
+- ✅ 3 users (admin + test + user)
+- ✅ 7 auditoriums (với auto-generated seats)
+- ✅ 658 seats (couple seats = half)
+- ✅ 22 bookings (bao gồm QR payment)
 - ✅ All relationships & indexes
 
 ---
@@ -78,13 +80,15 @@ mvn javafx:run
 
 ## 📊 DATABASE CÓ GÌ?
 
-| Table        | Records | Mô tả               |
-| ------------ | ------- | ------------------- |
-| api_user     | 2       | Admin + user1       |
-| api_movie    | 6       | Phim mẫu            |
-| api_showtime | 160     | Lịch chiếu (7 ngày) |
-| api_booking  | 1       | Booking mẫu         |
-| api_ticket   | 1       | Vé mẫu              |
+| Table          | Records | Mô tả                                  |
+| -------------- | ------- | -------------------------------------- |
+| api_user       | 3       | Admin + test + user                    |
+| api_movie      | 6       | Phim mẫu                               |
+| api_auditorium | 7       | Phòng chiếu (có auto-generated seats)  |
+| api_seat       | 658     | Ghế (couple seats = seats_per_row / 2) |
+| api_showtime   | 130     | Lịch chiếu (đã fix end_time)           |
+| api_booking    | 22      | Bookings (bao gồm QR payment)          |
+| api_ticket     | 30      | Vé                                     |
 
 ### 🔑 Login mặc định
 
@@ -93,9 +97,9 @@ Admin:
 - Username: admin
 - Password: admin123
 
-User:
-- Username: user1
-- Password: user123
+Test User:
+- Username: test
+- Password: test123
 ```
 
 ---
