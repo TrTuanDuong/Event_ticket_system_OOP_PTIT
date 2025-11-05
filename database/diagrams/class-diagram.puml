@@ -1,0 +1,157 @@
+@startuml
+' Title
+title Event Ticket System - Class Diagram (high-level)
+
+package "domain" {
+  class Movie {
+    +UUID id
+    +String title
+    +int durationMin
+    +String rating
+    +LocalDate releaseDate
+    +String description
+    +String posterUrl
+  }
+
+  class Auditorium {
+    +UUID id
+    +String name
+    +int standardRowCount
+    +int vipRowCount
+    +int coupleRowCount
+    +int seatsPerRow
+  }
+
+  class Seat {
+    +UUID id
+    +String rowLabel
+    +int seatNumber
+    +String seatType
+  }
+
+  class Showtime {
+    +UUID id
+    +OffsetDateTime startTime
+    +OffsetDateTime endTime
+    +BigDecimal price
+    +String status
+  }
+
+  class Booking {
+    +UUID id
+    +UUID userId
+    +UUID showtimeId
+    +String status
+    +BigDecimal totalAmount
+    +String paymentMethod
+    +OffsetDateTime createdAt
+    +OffsetDateTime expiresAt
+  }
+
+  class Ticket {
+    +UUID id
+    +UUID seatId
+    +UUID showtimeId
+    +UUID bookingId
+    +BigDecimal price
+  }
+
+  class User {
+    +UUID id
+    +String username
+    +String passwordHash
+  }
+
+  class Genre {
+    +UUID id
+    +String name
+  }
+}
+
+package "repo" {
+  class BaseRepo
+  class MovieRepo
+  class ShowtimeRepo
+  class SeatRepo
+  class BookingRepo
+  class UserRepo
+}
+
+package "service" {
+  class BaseService
+  class MovieService
+  class ShowtimeService
+  class SeatService
+  class BookingService
+  class ReportService
+  class AuthService
+  class SessionManager
+}
+
+package "ui" {
+  class LoginController
+  class AdminPanelController
+  class MovieListController
+  class ShowtimeListController
+  class SeatMapController
+  class PaymentController
+  class MyBookingsController
+  class ProfileSettingsController
+  class RegisterController
+  class DashboardController
+}
+
+package "config" {
+  class Database
+}
+
+package "util" {
+  class Tx
+}
+
+' Associations
+Movie "1" -- "0..*" Showtime : has
+Movie "0..*" -- "0..*" Genre : has >
+Auditorium "1" -- "0..*" Seat : contains
+Auditorium "1" -- "0..*" Showtime : hosts
+Showtime "1" -- "0..*" Ticket : issues
+Showtime "1" -- "0..*" Booking : referenced-by
+Booking "1" -- "0..*" Ticket : contains
+User "1" -- "0..*" Booking : makes
+Seat "1" -- "0..*" Ticket : assigned
+
+' Repos -> Domain
+MovieRepo ..> Movie
+ShowtimeRepo ..> Showtime
+SeatRepo ..> Seat
+BookingRepo ..> Booking
+UserRepo ..> User
+BaseRepo <|-- MovieRepo
+BaseRepo <|-- ShowtimeRepo
+BaseRepo <|-- SeatRepo
+BaseRepo <|-- BookingRepo
+BaseRepo <|-- UserRepo
+
+' Services -> Repos
+MovieService ..> MovieRepo
+ShowtimeService ..> ShowtimeRepo
+SeatService ..> SeatRepo
+BookingService ..> BookingRepo
+ReportService ..> BookingRepo
+ReportService ..> ShowtimeRepo
+
+' UI -> Services
+LoginController ..> AuthService
+AdminPanelController ..> MovieService
+AdminPanelController ..> ShowtimeService
+AdminPanelController ..> SeatService
+AdminPanelController ..> BookingService
+PaymentController ..> BookingService
+SeatMapController ..> SeatService
+
+' Config & util
+Database ..> BaseRepo
+Tx ..> BookingService
+Tx ..> SeatService
+
+@enduml

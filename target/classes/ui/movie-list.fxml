@@ -85,7 +85,7 @@
                 <!-- Movies Container -->
                 <FlowPane fx:id="moviesContainer"
                     hgap="30" vgap="30"
-                    alignment="TOP_LEFT"
+                    alignment="CENTER"
                     style="-fx-padding: 10;">
                     <!-- Movie cards will be added here dynamically -->
                 </FlowPane>

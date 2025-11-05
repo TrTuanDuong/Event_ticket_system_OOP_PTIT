@@ -1,9 +1,10 @@
-# ✨ FEATURES - TÍNH NĂNG HỆ THỐNG
+# ✨ FEATURES - CHI TIẾT TÍNH NĂNG
 
 > **Cinema Ticket Management System**  
 > **Version**: 1.0.0  
-> **Progress**: 85% Complete  
 > **Cập nhật**: Tháng 11/2025
+
+**Tài liệu chi tiết về các tính năng, code location, và implementation details**
 
 ---
 
@@ -13,7 +14,7 @@
 2. [User Features](#-user-features)
 3. [Admin Features](#-admin-features)
 4. [Special Features](#-special-features)
-5. [Technical Features](#-technical-features)
+5. [Implementation Details](#-implementation-details)
 
 ---
 
@@ -21,30 +22,96 @@
 
 ### ✅ Login System
 
-- **Django Password Compatibility**: PBKDF2-SHA256 hash verification
-- **Role-based Access**: Admin/User roles
-- **Session Management**: Keep user logged in
-- **Error Handling**: Invalid credentials, user not found
-- **UI**: Clean login form với validation
+**Mô tả**: Xác thực người dùng với Django password hash
 
-**Code Location**: `LoginController.java`, `AuthService.java`
+**Tài khoản mặc định**:
+
+- Admin: `admin` / `admin`
+- User: `test` / `123456`
+
+**Features**:
+
+- Django Password Compatibility: PBKDF2-SHA256 hash verification (260,000 iterations)
+- Role-based Access: Admin/User roles
+- Session Management: Keep user logged in across screens
+- Error Handling: Invalid credentials, user not found, database errors
+
+**Implementation**:
+
+```java
+// AuthService.java
+public User authenticate(String username, String password) {
+    User user = userRepo.findByUsername(username);
+    if (user != null && DjangoPassword.verify(password, user.getPassword())) {
+        SessionManager.getInstance().setCurrentUser(user);
+        return user;
+    }
+    return null;
+}
+```
+
+**Code Location**: `LoginController.java`, `AuthService.java`, `DjangoPassword.java`
+
+---
 
 ### ✅ Register System
 
-- **User Registration**: Create new account
-- **Validation**: Username unique, password strength
-- **Auto-hash Password**: Django-compatible PBKDF2
-- **Error Messages**: Duplicate username, invalid input
-- **UI**: Register form với real-time validation
+**Mô tả**: Đăng ký tài khoản mới
+
+**Features**:
+
+- User Registration: Create new account với auto-hash password
+- Validation: Username unique, password strength, email format
+- Auto-hash Password: Django-compatible PBKDF2
+- Default Role: User (không phải admin)
+
+**Implementation**:
+
+```java
+// AuthService.java
+public boolean register(String username, String password, String email) {
+    if (userRepo.findByUsername(username) != null) {
+        return false; // Username exists
+    }
+    String hashedPassword = DjangoPassword.hash(password);
+    User newUser = new User(username, hashedPassword, email, false);
+    userRepo.insert(newUser);
+    return true;
+}
+```
 
 **Code Location**: `RegisterController.java`, `AuthService.java`
 
+---
+
 ### ✅ Session Management
 
-- **Current User Tracking**: SessionManager singleton
-- **Auto-logout**: After inactivity (configurable)
-- **Session Timer**: 10-minute booking countdown
-- **Persistent Login**: Remember user across screens
+**Mô tả**: Quản lý phiên đăng nhập
+
+**Features**:
+
+- Current User Tracking: SessionManager singleton
+- Persistent Login: User object available across all screens
+- Logout: Clear session và redirect to login
+
+**Implementation**:
+
+```java
+// SessionManager.java (Singleton)
+private static SessionManager instance;
+private User currentUser;
+
+public static SessionManager getInstance() {
+    if (instance == null) {
+        instance = new SessionManager();
+    }
+    return instance;
+}
+
+public User getCurrentUser() { return currentUser; }
+public void setCurrentUser(User user) { this.currentUser = user; }
+public void logout() { this.currentUser = null; }
+```
 
 **Code Location**: `SessionManager.java`, `SessionTimer.java`
 
@@ -623,141 +690,155 @@ DjangoPassword.verify(plainPassword, djangoHash):
 
 ---
 
-## 🛠️ TECHNICAL FEATURES
+## 🛠️ IMPLEMENTATION DETAILS
 
-### ✅ Connection Pooling (HikariCP)
+### Connection Pooling (HikariCP)
 
-**Purpose**: Efficient database connections
+**Implementation**:
 
-**Benefits**:
+```java
+// Database.java (Singleton)
+private static HikariDataSource dataSource;
 
-- Reuse connections (không tạo mới mỗi lần)
-- Fast performance
-- Auto-recovery from failures
-- Connection leak detection
+public static Connection getConnection() throws SQLException {
+    if (dataSource == null) {
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(properties.getProperty("db.url"));
+        config.setUsername(properties.getProperty("db.user"));
+        config.setPassword(properties.getProperty("db.password"));
+        config.setMaximumPoolSize(10);
+        config.setConnectionTimeout(30000);
+        dataSource = new HikariDataSource(config);
+    }
+    return dataSource.getConnection();
+}
+```
 
 **Configuration**:
 
-```java
-HikariConfig:
-- maximumPoolSize: 10
-- connectionTimeout: 30s
-- idleTimeout: 10 minutes
-- maxLifetime: 30 minutes
-```
+- Max pool size: 10 connections
+- Connection timeout: 30s
+- Auto-recovery from failures
+- Connection leak detection
+
+**Code Location**: `Database.java`
 
 ---
 
-### ✅ Transaction Management
+### Transaction Management
 
-**Utility**: `Tx.java` - Functional transaction wrapper
-
-**Usage**:
+**Implementation**:
 
 ```java
-List<Movie> movies = Tx.withTx(dataSource, conn -> {
+// Tx.java - Functional transaction wrapper
+public static <T> T withTx(DataSource ds, SqlFunction<Connection, T> fn) {
+    try (Connection conn = ds.getConnection()) {
+        conn.setAutoCommit(false);
+        try {
+            T result = fn.apply(conn);
+            conn.commit();
+            return result;
+        } catch (Exception e) {
+            conn.rollback();
+            throw e;
+        }
+    }
+}
+```
+
+**Usage Example**:
+
+```java
+List<Movie> movies = Tx.withTx(Database.getDataSource(), conn -> {
     return movieRepo.findAll(conn);
 });
 ```
 
-**Features**:
-
-- Auto commit on success
-- Auto rollback on exception
-- Resource cleanup (try-with-resources)
-- Generic return types
+**Code Location**: `Tx.java`
 
 ---
 
-### ✅ Repository Pattern
+### Repository Pattern
 
-**Structure**: BaseRepo → Concrete repos
+**Base Repository**:
 
-**Benefits**:
+```java
+// BaseRepo.java (Template Method Pattern)
+public abstract class BaseRepo<T> {
+    protected abstract T mapRow(ResultSet rs) throws SQLException;
+    protected abstract String getTableName();
 
-- Separation of concerns
-- Reusable query logic
-- Easy testing (mock repos)
-- Consistent API
-
-**Repositories**:
-
-- UserRepo: findByUsername, findAll
-- MovieRepo: findAll, findById, insert, update, delete
-- ShowtimeRepo: findUpcoming, findByMovieId
-- BookingRepo: findPendingApproval, updateStatus
-- SeatRepo: findByShowtime, updateStatus
-
----
-
-### ✅ 3-Layer Architecture
-
-```
-UI Layer (Controllers + FXML)
-    ↓ calls
-Service Layer (Business Logic)
-    ↓ calls
-Repository Layer (Data Access)
-    ↓ connects
-Database (PostgreSQL)
+    public List<T> findAll(Connection conn) throws SQLException {
+        String sql = "SELECT * FROM " + getTableName();
+        List<T> results = new ArrayList<>();
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                results.add(mapRow(rs));
+            }
+        }
+        return results;
+    }
+}
 ```
 
-**Benefits**:
+**Concrete Repository Example**:
 
-- Clear separation
-- Testable layers
-- Maintainable code
-- Scalable structure
+```java
+// MovieRepo.java
+public class MovieRepo extends BaseRepo<Movie> {
+    @Override
+    protected String getTableName() { return "api_movie"; }
 
----
+    @Override
+    protected Movie mapRow(ResultSet rs) throws SQLException {
+        return new Movie(
+            UUID.fromString(rs.getString("id")),
+            rs.getString("title"),
+            rs.getString("director"),
+            rs.getInt("duration_min"),
+            rs.getDouble("rating")
+        );
+    }
+}
+```
 
-### ✅ Singleton Pattern
+**Available Repositories**:
 
-**Implementations**:
+- `UserRepo`: findByUsername, findAll, insert
+- `MovieRepo`: findAll, findById, insert, update, delete
+- `ShowtimeRepo`: findUpcoming, findByMovieId, hasScheduleConflict
+- `BookingRepo`: findPendingApproval, updateStatus, findByUser
+- `SeatRepo`: findByShowtime, updateStatus, getBookedSeatIds
 
-- `Database.get()`: Connection pool
-- `SessionManager.getInstance()`: Current user
-- `SessionTimer.getInstance()`: Booking timer
-
-**Benefits**:
-
-- Single instance guarantee
-- Global access point
-- Resource efficiency
-
----
-
-## 📊 FEATURE COMPLETION STATUS
-
-| Category             | Features | Completed | Progress |
-| -------------------- | -------- | --------- | -------- |
-| **Authentication**   | 3        | 3/3       | 100% ✅  |
-| **User Features**    | 7        | 7/7       | 100% ✅  |
-| **Admin Features**   | 7        | 7/7       | 100% ✅  |
-| **Special Features** | 4        | 4/4       | 100% ✅  |
-| **Technical**        | 5        | 5/5       | 100% ✅  |
-| **Total**            | 26       | 26/26     | 100% ✅  |
+**Code Location**: `repo/` package
 
 ---
 
-## 🚧 FUTURE ENHANCEMENTS (Planned)
+---
 
-### Phase 2 Features
+## � TÀI LIỆU LIÊN QUAN
 
-- [ ] **Ticket QR Code**: Generate QR for check-in
-- [ ] **Email Notifications**: Booking confirmations, reminders
-- [ ] **Advanced Reports**: Revenue, Popular movies, Occupancy
-- [ ] **Seat Map Enhancements**: Zoom, Pan, Mobile-friendly
-- [x] **Real-time Seat Updates**: ✅ DONE - Auto-refresh mỗi 5 giây
-- [ ] **WebSocket Integration**: Instant push notifications (upgrade from polling)
-- [ ] **Payment Integration**: VNPay, Momo API
-- [ ] **Export Data**: PDF bookings, Excel reports
-- [ ] **Multi-language**: English, Vietnamese
-- [ ] **Dark Mode**: UI theme switcher
-- [ ] **Mobile App**: Flutter/React Native version
+- **[README.md](README.md)**: Tổng quan dự án, quick start, kiến trúc
+- **[Chạy.md](Chạy.md)**: Hướng dẫn cài đặt chi tiết
+- **[TASK_ASSIGNMENT.md](TASK_ASSIGNMENT.md)**: Phân công công việc 4 người
+- **Database Diagrams**: `database/diagrams/`
 
 ---
 
-**Last Updated**: November 2025  
-**Version**: 1.0.0  
-**Status**: Production Ready ✅
+## 🔗 CODE STRUCTURE
+
+```
+src/main/java/com/ptit/ticketing/
+├── ui/           → 10 Controllers (Login, Dashboard, MovieList, SeatMap, Payment, Admin...)
+├── service/      → 9 Services (Auth, Movie, Booking, Seat, Report, Session...)
+├── repo/         → 6 Repositories (User, Movie, Showtime, Booking, Seat...)
+├── domain/       → 8 Domain models (User, Movie, Genre, Showtime, Auditorium, Seat, Booking, Ticket)
+├── config/       → Database.java (HikariCP connection pool)
+├── auth/         → DjangoPassword.java (PBKDF2 hashing)
+└── util/         → Tx.java (Transaction helper)
+```
+
+---
+
+**🎓 Dự án OOP - PTIT**

@@ -1,66 +1,33 @@
-# 🎬 Cinema Ticket Management System - JavaFX Edition
+# 🎬 Cinema Ticket Management System
 
 > **Dự án OOP - PTIT**  
-> **Tech Stack**: Java 21 + JavaFX 22 + PostgreSQL 16 + Maven  
-> **Timeline**: 10 days | **Progress**: 85% ✅  
-> **Status**: Fully Functional with Admin Panel, Booking System, QR Payment Approval
+> **Tech Stack**: Java 21 + JavaFX 22 + PostgreSQL 16 + Maven
 
-Ứng dụng quản lý rạp chiếu phim desktop hiện đại sử dụng JavaFX, kết nối **trực tiếp** với PostgreSQL database.
+Hệ thống quản lý đặt vé rạp chiếu phim desktop với giao diện JavaFX hiện đại, tích hợp đầy đủ tính năng quản lý phim, suất chiếu, đặt vé, thanh toán và thống kê doanh thu.
 
 ## ✨ Tính năng nổi bật
 
-- ✅ **Quản lý Phim**: CRUD phim với thể loại, đạo diễn, poster
-- ✅ **Quản lý Suất chiếu**: Tạo, sửa, xóa lịch chiếu với validation
-- ✅ **Quản lý Phòng chiếu**: CRUD auditorium với cấu hình ghế
-- ✅ **Đặt vé**: Booking với timer 10 phút, chọn ghế interactive
-- ✅ **Thanh toán QR**: Workflow phê duyệt payment từ admin
-- ✅ **Admin Panel**: Dashboard quản lý toàn diện
-- ✅ **Authentication**: Login/Register với Django password hash
-- ✅ **Session Management**: Tự động logout sau timeout
-- ✅ **Statistics**: Thống kê movies, users, bookings
+### 👤 Dành cho Khách hàng
 
----
+- 🔐 **Đăng ký/Đăng nhập**: Authentication với Django password hash (PBKDF2-SHA256)
+- 🎬 **Duyệt phim**: Xem danh sách phim, search, filter theo thể loại
+- 🎫 **Đặt vé thông minh**:
+  - Chọn suất chiếu theo phim và thời gian
+  - Seat map interactive với real-time updates (5s refresh)
+  - Phân loại ghế: Standard (50k) / VIP (100k) / Couple (150k)
+  - Timer 10 phút tự động release ghế
+- 💳 **Thanh toán linh hoạt**: QR Code (chờ duyệt) hoặc Cash (tức thì)
+- 📋 **Quản lý booking**: Xem lịch sử, trạng thái đặt vé
+- ⚙️ **Profile**: Cập nhật thông tin, đổi mật khẩu
 
-## 📚 DOCUMENTATION (Chỉ 2 files!)
+### 👨‍💼 Dành cho Admin
 
-### 🎯 Bắt đầu với 2 file này:
-
-#### 1. **[PROJECT_OVERVIEW.md](PROJECT_OVERVIEW.md)** ⭐ **(Đọc đầu tiên)**
-
-**Mục đích**: Hiểu dự án - Ai làm gì, Kiến trúc thế nào
-
-**Nội dung**:
-
-- 📋 Giới thiệu dự án & mục tiêu
-- 👥 **Phân công 4 thành viên** (A, B, C, D) - Trách nhiệm cụ thể
-- 🏗️ Kiến trúc hệ thống (Shared Database + 3-layer)
-- 📁 Cấu trúc project (files & folders)
-- 🗄️ Database schema (10+ tables, relationships)
-- 🎨 Design patterns (Singleton, Template Method, Repository...)
-- 📅 Timeline 10 ngày
-
-**Đọc khi**: Lần đầu vào project, cần hiểu overview
-
----
-
-#### 2. **[DEVELOPMENT_GUIDE.md](DEVELOPMENT_GUIDE.md)** ⭐ **(Thực hành)**
-
-**Mục đích**: Setup, chạy, test và develop dự án
-
-**Nội dung**:
-
-- 💻 Yêu cầu hệ thống (Java 21, Maven, PostgreSQL)
-- 🛠️ **Cài đặt môi trường** (step-by-step)
-- 🔧 **Setup dự án** (database, config)
-- ▶️ **Chạy dự án** (Maven, IDE, JAR)
-- 🧪 **Test dự án** (database, Java, app)
-- 📊 Sử dụng dữ liệu (view, add, reset)
-- ✅ **Công việc đã hoàn thành** (40% - 8 components)
-- 💡 **Hướng dẫn develop** (services, UI, repos với code templates)
-- 🆘 **Troubleshooting** (8 vấn đề thường gặp)
-- 🔄 Git workflow
-
-**Đọc khi**: Cài đặt lần đầu, bắt đầu develop, gặp lỗi
+- 📽️ **Quản lý Phim**: CRUD phim với poster, thể loại, đạo diễn, thời lượng
+- 🎬 **Quản lý Suất chiếu**: Tạo/sửa/xóa lịch chiếu, validation trùng lịch
+- 🏛️ **Quản lý Phòng chiếu**: CRUD auditorium, cấu hình ghế
+- 👥 **Quản lý User**: Xem danh sách, phân quyền
+- 💰 **Phê duyệt thanh toán**: Approve/Reject QR payments
+- 📊 **Thống kê & Báo cáo**: Revenue, occupancy rate, export Excel
 
 ---
 
@@ -100,58 +67,72 @@ mvn javafx:run
 ```
 Admin:
 - Username: admin
-- Password: admin123
+- Password: admin
 
 User:
-- Username: user1
-- Password: user123
+- Username: test
+- Password: 123456
 ```
 
 **Expected**: Cửa sổ JavaFX hiển thị danh sách movies & showtimes ✅
 
 ---
 
-## 🏗️ KIẾN TRÚC & DESIGN PATTERNS
+## 🏗️ KIẾN TRÚC HỆ THỐNG
 
 ### 3-Layer Architecture
 
 ```
-┌─────────────────────────────────┐
-│   PRESENTATION LAYER (UI)       │
-│   - FXML files                  │
-│   - Controllers                 │
-│   - JavaFX components           │
-└─────────────────────────────────┘
-            ↓ calls
-┌─────────────────────────────────┐
-│   BUSINESS LAYER (Services)     │
-│   - MovieService                │
-│   - BookingService              │
-│   - AuthService                 │
-│   - SessionManager              │
-└─────────────────────────────────┘
-            ↓ calls
-┌─────────────────────────────────┐
-│   DATA LAYER (Repositories)     │
-│   - UserRepo, MovieRepo         │
-│   - ShowtimeRepo, BookingRepo   │
-│   - Database connection pool    │
-└─────────────────────────────────┘
-            ↓ connects
-┌─────────────────────────────────┐
-│   PostgreSQL Database           │
-│   - 10+ tables                  │
-│   - Relationships & indexes     │
-└─────────────────────────────────┘
+UI Layer (FXML + Controllers)
+    ↓ calls
+Service Layer (Business Logic)
+    ↓ calls
+Repository Layer (Data Access)
+    ↓ connects
+PostgreSQL Database
 ```
 
-### Design Patterns Applied
+**Chi tiết các layer**:
 
-1. **Singleton**: Database connection pool, SessionManager, SessionTimer
-2. **Template Method**: BaseRepo, BaseService
-3. **Repository**: Data access abstraction
-4. **MVC**: Model-View-Controller separation
-5. **Dependency Injection**: Services injected vào controllers
+1. **Presentation Layer** - JavaFX UI
+
+   - 10 FXML files: login, dashboard, movie-list, seat-map, payment, admin-panel...
+   - 10 Controllers: xử lý events, binding data
+   - Components: GridPane (seat map), FlowPane (movies), TableView (admin)
+
+2. **Business Layer** - Services
+
+   - `AuthService`: Login/Register, password hashing
+   - `MovieService`, `ShowtimeService`: CRUD operations
+   - `BookingService`: Booking logic, timer, payment workflow
+   - `SeatService`: Seat availability, real-time updates
+   - `ReportService`: Statistics, Excel export
+   - `SessionManager`: User session tracking
+
+3. **Data Access Layer** - Repositories
+
+   - `BaseRepo<T>`: Template method pattern
+   - 6 Repositories: UserRepo, MovieRepo, ShowtimeRepo, SeatRepo, BookingRepo
+   - Transaction management: `Tx.java`
+   - Connection pool: HikariCP (Singleton)
+
+4. **Database Layer** - PostgreSQL
+   - 10+ tables với relationships
+   - Indexes để optimize queries
+   - Foreign keys & constraints
+
+### Design Patterns (8 patterns)
+
+| Pattern             | Ứng dụng                               | Mục đích                          |
+| ------------------- | -------------------------------------- | --------------------------------- |
+| **Singleton**       | Database, SessionManager, SessionTimer | Đảm bảo chỉ 1 instance duy nhất   |
+| **Template Method** | BaseRepo, BaseService                  | Định nghĩa skeleton cho CRUD      |
+| **Repository**      | UserRepo, MovieRepo, etc.              | Tách biệt data access logic       |
+| **MVC**             | Controllers + Services + Models        | Separation of concerns            |
+| **Factory**         | Seat types (Standard/VIP/Couple)       | Tạo objects theo loại             |
+| **Strategy**        | Payment methods (QR/Cash)              | Đa dạng hóa payment logic         |
+| **State**           | Booking status (Pending/Paid/Canceled) | Quản lý trạng thái                |
+| **Observer**        | Real-time seat updates                 | Auto-refresh UI khi data thay đổi |
 
 ## 🗄️ DATABASE SCHEMA
 
@@ -176,6 +157,60 @@ Movie ─N:M→ Genre (via moviegenre)
 Booking ─N:1→ Showtime
 ```
 
+## 🎨 KỸ THUẬT NỔI BẬT
+
+### 1. Real-time Seat Availability
+
+```java
+// Auto-refresh mỗi 5 giây
+ScheduledExecutorService seatUpdateScheduler;
+- Query database để check ghế đã book
+- Platform.runLater() update UI (JavaFX thread-safe)
+- Daemon thread tự động stop khi rời màn hình
+```
+
+### 2. Booking Timer System
+
+```java
+// SessionTimer (Singleton)
+- 10 phút countdown từ khi chọn ghế
+- Timeline animation với color transition
+- Green → Orange (<3min) → Red (<1min)
+- Auto-release seats khi timeout
+```
+
+### 3. Security - Django Password Compatibility
+
+```java
+// PBKDF2-SHA256 hashing
+- 260,000 iterations
+- Compatible với Django backend
+- Salt-based hashing
+```
+
+### 4. Transaction Management
+
+```java
+// Tx.java - Rollback on error
+Connection conn = Database.getConnection();
+conn.setAutoCommit(false);
+try {
+    // Execute queries
+    conn.commit();
+} catch (Exception e) {
+    conn.rollback();
+}
+```
+
+### 5. Connection Pooling
+
+```java
+// HikariCP - High performance
+- Max pool size: 10 connections
+- Connection timeout: 30 seconds
+- Singleton pattern
+```
+
 ## 🧪 TESTING
 
 ```bash
@@ -185,54 +220,9 @@ psql -d cinema -c "SELECT COUNT(*) FROM api_movie;"
 # Compile project
 mvn clean compile
 
-# Run tests
-mvn test
-
 # Run application
 mvn javafx:run
 ```
-
----
-
-## 📊 TIẾN ĐỘ DỰ ÁN: 85% ✅
-
-### ✅ Hoàn thành (85%)
-
-**Backend & Data Layer**:
-
-- ✅ Database schema (10+ tables with relationships)
-- ✅ Connection pool (HikariCP + Singleton)
-- ✅ Domain models (7 entities)
-- ✅ Repository layer (UserRepo, MovieRepo, ShowtimeRepo, BookingRepo, SeatRepo)
-- ✅ Transaction utility (Tx.java)
-
-**Business Logic Layer**:
-
-- ✅ AuthService (Login/Register với Django password)
-- ✅ SessionManager (10-minute booking timer, auto-logout)
-- ✅ MovieService (CRUD movies với genres)
-- ✅ ShowtimeService (CRUD showtimes với validation)
-- ✅ BookingService (QR payment approval workflow)
-
-**UI Layer**:
-
-- ✅ Login/Register screens
-- ✅ Dashboard (User & Admin views)
-- ✅ Movie List (Search, filter)
-- ✅ Showtime List
-- ✅ Seat Map (Interactive selection với timer)
-- ✅ Payment screen (QR/Cash với timer)
-- ✅ Admin Panel (Movies, Users, Showtimes, Auditoriums, Bookings, QR Approval, Statistics)
-- ✅ Profile Settings (Update info, change password, logout)
-- ✅ My Bookings (View booking history)
-
-### � Đang phát triển (15%)
-
-- 🔄 Ticket QR Code generation
-- 🔄 Seat availability real-time updates
-- 🔄 Advanced statistics & reports
-- 🔄 Email notifications
-- 🔄 Export booking data to PDF/Excel
 
 ---
 
@@ -357,45 +347,40 @@ java -version
 
 ---
 
-## 🎯 TÍNH NĂNG CHI TIẾT
+## 📊 WORKFLOW HỆ THỐNG
 
-### 🔐 Authentication & Authorization
+### User Booking Flow
 
-- Login với Django PBKDF2-SHA256 password verification
-- Register tài khoản mới với validation
-- Session management với auto-logout
-- Role-based access (Admin/User)
+```
+1. Login → Dashboard
+2. Browse Movies (search/filter)
+3. Select Movie → View Showtimes
+4. Choose Showtime → Seat Map (timer bắt đầu ⏰)
+5. Select Seats (Standard/VIP/Couple)
+6. Payment (QR/Cash)
+7. Booking Confirmation
+```
 
-### 👤 User Features
+### Admin Management Flow
 
-- **Dashboard**: Xem movies đang chiếu, upcoming showtimes
-- **Movie List**: Search, filter phim theo thể loại
-- **Booking Flow**:
-  1. Chọn phim → Xem showtimes
-  2. Chọn suất chiếu → Seat map interactive
-  3. Chọn ghế (Standard/VIP/Couple) với timer 10 phút
-  4. Thanh toán (QR Code/Cash)
-  5. Nhận booking confirmation
-- **My Bookings**: Xem lịch sử đặt vé
-- **Profile**: Cập nhật thông tin, đổi password
+```
+1. Login Admin → Admin Panel
+2. Tab Movies: CRUD phim, upload poster
+3. Tab Showtimes: Tạo lịch chiếu, validation trùng
+4. Tab Auditoriums: Quản lý phòng, cấu hình ghế
+5. Tab QR Approval: Duyệt/Từ chối thanh toán
+6. Tab Statistics: Xem báo cáo, export Excel
+```
 
-### 👨‍💼 Admin Features
+### Payment Workflow
 
-- **Movies Management**: CRUD phim với poster, thể loại, thời lượng
-- **Showtimes Management**: Tạo/sửa/xóa lịch chiếu với validation trùng lịch
-- **Auditoriums Management**: Quản lý phòng chiếu và cấu hình ghế
-- **Users Management**: Xem và quản lý tài khoản
-- **Bookings Management**: Xem chi tiết booking và tickets
-- **QR Payment Approval**: Phê duyệt/từ chối thanh toán QR
-- **Statistics**: Dashboard thống kê tổng quan
+```
+QR Code Payment:
+User chọn QR → Status: Pending → Admin duyệt → Status: Paid
 
-### ⏱️ Special Features
-
-- **10-Minute Booking Timer**: Tự động hủy booking khi hết thời gian
-- **QR Payment Workflow**: Pending → Admin Approval → Confirmed
-- **Real-time Seat Updates**: Auto-refresh seat availability mỗi 5 giây
-- **Session Timer**: Auto-logout khi inactive
-- **Password Security**: Django-compatible PBKDF2 hashing
+Cash Payment:
+User chọn Cash → Status: Paid (instant) → Pay tại quầy
+```
 
 ## 🆘 TROUBLESHOOTING
 
@@ -439,32 +424,25 @@ java -version
 # Should show: openjdk version "21.x.x"
 ```
 
-## 📚 DOCUMENTATION
+## � THỐNG KÊ DỰ ÁN
 
-- **README.md** (this file): Quick start & overview
-- **[Chạy.md](Chạy.md)**: Detailed development guide
-- **[OVERVIEW.md](OVERVIEW.md)**: Project architecture & patterns
-- **[database/README.md](database/README.md)**: Database setup guide
+- **Tổng số files**: ~60 files
+- **Lines of Code**: ~7,600 LOC
+- **Domain Models**: 8 entities (User, Movie, Genre, Showtime, Auditorium, Seat, Booking, Ticket)
+- **Repositories**: 6 repos (BaseRepo + 5 concrete)
+- **Services**: 9 services
+- **UI Controllers**: 10 controllers
+- **FXML Files**: 10 screens
+- **Database Tables**: 10+ tables
+- **Design Patterns**: 8 patterns applied
 
-## 🤝 CONTRIBUTING
-
-1. Fork repository
-2. Create feature branch: `git checkout -b feature/new-feature`
-3. Commit changes: `git commit -m "Add new feature"`
-4. Push to branch: `git push origin feature/new-feature`
-5. Create Pull Request
-
-## 📞 CONTACT & SUPPORT
+## � LIÊN KẾT
 
 - **Repository**: https://github.com/TrTuanDuong/Event_ticket_system_OOP_PTIT
-- **Issues**: [GitHub Issues](https://github.com/TrTuanDuong/Event_ticket_system_OOP_PTIT/issues)
+- **Database Diagrams**: `/database/diagrams/`
+- **Task Assignment**: `TASK_ASSIGNMENT.md`
 
 ---
 
-## 📝 LICENSE
-
-Educational project - PTIT University
-
----
-
-**Made with ❤️ by PTIT Students** | **Java 21 + JavaFX 22 + PostgreSQL 16**
+**🎓 Dự án OOP - Học viện Công nghệ Bưu chính Viễn thông (PTIT)**  
+**Made with ❤️ by CODESEAT| **Java 21 + JavaFX 22 + PostgreSQL 16**

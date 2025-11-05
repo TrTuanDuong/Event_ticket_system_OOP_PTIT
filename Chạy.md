@@ -62,14 +62,14 @@ mvn javafx:run
 
 ```
 Username: admin
-Password: admin123
+Password: admin
 ```
 
 ### User
 
 ```
-Username: user1
-Password: user123
+Username: test
+Password: 123456
 ```
 
 ---
@@ -78,9 +78,9 @@ Password: user123
 
 ### User Flow
 
-1. Login với `user1/user123`
+1. Login với `test / 123456`
 2. Dashboard → Xem phim đang chiếu
-3. Click "Đặt vé ngay" → Xem showtimes
+3. Click phim → Xem showtimes
 4. Chọn suất chiếu → Seat map interactive
 5. Chọn ghế (Standard/VIP/Couple)
 6. Timer 10 phút bắt đầu đếm ngược
@@ -90,7 +90,7 @@ Password: user123
 
 ### Admin Flow
 
-1. Login với `admin/admin123`
+1. Login với `admin / admin`
 2. Click "Admin Panel"
 3. Tab "📽️ Quản lý Phim" → CRUD movies
 4. Tab "🎬 Quản lý Suất chiếu" → Tạo/sửa/xóa showtimes
@@ -228,18 +228,19 @@ psql -d cinema < database/cinema_dump.sql
 ## 📚 NEXT STEPS
 
 1. ✅ Chạy được application
-2. ✅ Login thành công
-3. ✅ Test booking flow
-4. → Đọc [README.md](README.md) để hiểu features
-5. → Đọc [OVERVIEW.md](OVERVIEW.md) để hiểu architecture
+2. ✅ Login thành công (`test/123456` hoặc `admin/admin`)
+3. ✅ Test booking flow (chọn phim → showtime → ghế → thanh toán)
+4. ✅ Test admin panel (CRUD movies, showtimes, duyệt QR)
+5. → Đọc [README.md](README.md) để hiểu đầy đủ features & architecture
 
 ---
 
 ## 🆘 SUPPORT
 
+- **Repository**: [GitHub](https://github.com/TrTuanDuong/Event_ticket_system_OOP_PTIT)
 - **Issues**: [GitHub Issues](https://github.com/TrTuanDuong/Event_ticket_system_OOP_PTIT/issues)
-- **Documentation**: Xem các file README trong project
 
 ---
 
-**Made with ❤️ by PTIT Students** | **Setup in 10 minutes!** ⚡
+**🎓 Dự án OOP - PTIT**  
+**Made with ❤️ by CODESEAT** | **Setup in 10 minutes!** ⚡
